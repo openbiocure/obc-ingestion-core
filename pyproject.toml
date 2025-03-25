@@ -1,0 +1,80 @@
+[project]
+name = "herpai-lib"
+version = "0.1.0"
+description = "HerpAI Core Library, Accelerating the discovery of a functional cure for HSV-1 and HSV-2 using AI."
+authors = [
+  {name = "OpenBioCure Contributors", email = "openbiocure@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "sqlalchemy>=2.0",
+    "pydantic>=2.0",
+    "python-dotenv>=1.0",
+    "requests>=2.31",
+    "pyyaml>=6.0",
+    "tqdm>=4.65",
+    "typing-extensions>=4.7",
+    "alembic>=1.11",  # for database migrations
+    "psycopg2-binary>=2.9",  # for PostgreSQL support
+    "pytest>=7.4",  # for testing
+    "pytest-cov>=4.1",  # for test coverage
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.7",
+    "isort>=5.12",
+    "flake8>=6.1",
+    "mypy>=1.4",
+    "pre-commit>=3.3",
+    "pytest-asyncio>=0.21",
+]
+
+docs = [
+    "sphinx>=7.0",
+    "sphinx-rtd-theme>=1.2",
+    "sphinx-autodoc-typehints>=1.23",
+]
+
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests*", "docs*", "examples*"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.black]
+line-length = 100
+target-version = ['py39']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 100
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --cov=herpai_lib"
+testpaths = [
+    "tests",
+]
+
+[project.urls]
+Homepage = "https://github.com/openbiocure/herpai-lib"
+Documentation = "https://herpai-lib.readthedocs.io"
+Repository = "https://github.com/openbiocure/herpai-lib.git"
+"Bug Tracker" = "https://github.com/openbiocure/herpai-lib/issues"
