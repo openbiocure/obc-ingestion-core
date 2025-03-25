@@ -30,6 +30,8 @@ dev = [
     "mypy>=1.4",
     "pre-commit>=3.3",
     "pytest-asyncio>=0.21",
+    "aiosqlite",
+    "greenlet"
 ]
 
 docs = [
@@ -68,10 +70,13 @@ check_untyped_defs = true
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-addopts = "-ra -q --cov=herpai_lib"
+addopts = "-ra -q --cov=herpailib"
 testpaths = [
     "tests",
 ]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
 
 [project.urls]
 Homepage = "https://github.com/openbiocure/herpai-lib"

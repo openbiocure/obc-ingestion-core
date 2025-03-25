@@ -53,19 +53,19 @@ dev-install: venv
 
 test:
 	@echo "$(BLUE)Running tests...$(NC)"
-	. $(VENV_ACTIVATE) && pytest tests/ -v --cov=herpai_lib --cov-report=term-missing
+	. $(VENV_ACTIVATE) && pytest tests/ -v --cov=herpailib --cov-report=term-missing
 
 lint:
 	@echo "$(BLUE)Running linters...$(NC)"
-	. $(VENV_ACTIVATE) && flake8 herpai_lib tests
-	. $(VENV_ACTIVATE) && mypy herpai_lib tests
-	. $(VENV_ACTIVATE) && black --check herpai_lib tests
-	. $(VENV_ACTIVATE) && isort --check-only herpai_lib tests
+	. $(VENV_ACTIVATE) && flake8 herpailib tests
+	. $(VENV_ACTIVATE) && mypy herpailib tests
+	. $(VENV_ACTIVATE) && black --check herpailib tests
+	. $(VENV_ACTIVATE) && isort --check-only herpailib tests
 
 format:
 	@echo "$(BLUE)Formatting code...$(NC)"
-	. $(VENV_ACTIVATE) && black herpai_lib tests
-	. $(VENV_ACTIVATE) && isort herpai_lib tests
+	. $(VENV_ACTIVATE) && black herpailib tests
+	. $(VENV_ACTIVATE) && isort herpailib tests
 
 clean:
 	@echo "$(BLUE)Cleaning up...$(NC)"
@@ -77,7 +77,7 @@ clean:
 	rm -rf .coverage
 	rm -rf .mypy_cache/
 	rm -rf __pycache__/
-	rm -rf herpai_lib/__pycache__/
+	rm -rf herpailib/__pycache__/
 	rm -rf tests/__pycache__/
 	@echo "$(GREEN)Cleanup complete.$(NC)"
 
