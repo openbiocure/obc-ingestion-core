@@ -1,6 +1,0 @@
-{
-    "python.testing.pytestEnabled": true,
-    "python.testing.pytestArgs": ["tests"],  // or your test directory
-    "python.testing.unittestEnabled": false,
-    "python.testing.nosetestsEnabled": false
-  }
