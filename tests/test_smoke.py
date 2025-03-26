@@ -1,3 +1,6 @@
 # tests/test_smoke.py
-def test_basic():
+import pytest
+
+@pytest.mark.asyncio
+async def test_smoke():
     assert True

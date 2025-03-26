@@ -1,21 +1,44 @@
+# tests/conftest.py
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
+import pytest_asyncio
+import asyncio
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from herpailib.infrastructure.db.base_entity import Base
 
-@pytest.fixture
-def test_db_url():
-    return "sqlite:///:memory:"
-
-@pytest.fixture
-def test_engine(test_db_url):
-    engine = create_engine(
-        test_db_url,
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
+@pytest_asyncio.fixture(scope="session")
+async def test_engine():
+    """Create a test database engine."""
+    engine = create_async_engine(
+        "sqlite+aiosqlite:///:memory:",
+        echo=False,
+        connect_args={"check_same_thread": False}
     )
-    return engine
+    
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    
+    yield engine
+    
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+    await engine.dispose()
 
-@pytest.fixture
-def test_session_maker(test_engine):
-    return sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+@pytest_asyncio.fixture(scope="session")
+def session_factory(test_engine):
+    """Create a session factory."""
+    return async_sessionmaker(
+        bind=test_engine,
+        expire_on_commit=False,
+        autoflush=False
+    )
+
+@pytest_asyncio.fixture
+async def session(session_factory) -> AsyncSession:
+    """Create a new session for a test."""
+    async with session_factory() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
