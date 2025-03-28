@@ -1,0 +1,106 @@
+app:
+  default_model_provider: claude
+  agents:
+    virology:
+      model_provider: claude
+      model: claude-3-7-sonnet-latest
+      prompt_version: v1
+      cache: true
+      max_tokens: 2500
+      temperature: 0.4
+      tags:
+        - HSV
+        - herpesvirus
+        - latency
+        - gene regulation
+      is_research_domain: true
+    transmission_prevention:
+      model_provider: claude
+      model: claude-3-7-sonnet-latest
+      prompt_version: v1
+      cache: true
+      max_tokens: 2000
+      temperature: 0.3
+      tags:
+        - transmission
+        - prophylaxis
+        - condom
+        - vaccination
+      is_research_domain: true
+    target_prioritization:
+      model_provider: claude
+      model: claude-3-7-sonnet-latest
+      prompt_version: v1
+      cache: true
+      max_tokens: 2500
+      temperature: 0.4
+      tags:
+        - UL30
+        - target
+        - conserved
+      is_research_domain: true
+    drug_design:
+      model_provider: claude
+      model: claude-3-7-sonnet-latest
+      prompt_version: v1
+      cache: true
+      max_tokens: 2500
+      temperature: 0.5
+      tags:
+        - compound
+        - inhibitor
+        - drug
+        - molecule
+      is_research_domain: true
+    crispr_design:
+      model_provider: claude
+      model: claude-3-7-sonnet-latest
+      prompt_version: v1
+      cache: true
+      max_tokens: 2500
+      temperature: 0.4
+      tags:
+        - gRNA
+        - CRISPR
+        - Cas9
+        - gene editing
+      is_research_domain: true
+    delivery_optimization:
+      model_provider: claude
+      model: claude-3-7-sonnet-latest
+      prompt_version: v1
+      cache: true
+      max_tokens: 2500
+      temperature: 0.4
+      tags:
+        - vector
+        - liposome
+        - AAV
+        - nanoparticle
+      is_research_domain: true
+    report_generator:
+      model_provider: claude
+      model: claude-3-7-sonnet-latest
+      prompt_version: default
+      cache: false
+      max_tokens: 1000
+      temperature: 0.0
+      tags: []
+      is_research_domain: false
+    tagging:
+      model_provider: claude
+      model: claude-3-7-sonnet-latest
+      prompt_version: v1
+      cache: true
+      max_tokens: 1500
+      temperature: 0.3
+      tags: []
+      is_research_domain: false
+database:
+  host: "localhost"
+  port: 5432
+  database: "herpai"
+  username: "postgres"
+  password: "your_password"
+  dialect: "postgresql"
+  driver: "psycopg2"

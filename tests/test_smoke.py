@@ -1,6 +1,8 @@
-# tests/test_smoke.py
 import pytest
+from src import engine
+from src.core.engine import Engine
 
-@pytest.mark.asyncio
-async def test_smoke():
-    assert True
+def test_import():
+    """Test that the library can be imported."""
+    assert engine is not None
+    assert isinstance(engine, Engine)

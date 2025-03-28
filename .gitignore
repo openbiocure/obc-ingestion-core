@@ -8,6 +8,8 @@ __pycache__/
 # C extensions
 *.so
 
+.coverage
+.coverage.*
 # Distribution / packaging
 .Python
 build/
@@ -42,16 +44,16 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .nox/
-herpailib/.coverage
-herpailib/.coverage.*
-herpailib/.cache
-herpailib/nosetests.xml
-herpailib/coverage.xml
-herpailib/*.cover
-herpailib/*.py,cover
-herpailib/.hypothesis/
-herpailib/.pytest_cache/
-herpailib/cover/
+src/.coverage
+src/.coverage.*
+src/.cache
+src/nosetests.xml
+src/coverage.xml
+src/*.cover
+src/*.py,cover
+src/.hypothesis/
+src/.pytest_cache/
+src/cover/
 
 # Translations
 *.mo
