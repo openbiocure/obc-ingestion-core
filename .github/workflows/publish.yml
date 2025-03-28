@@ -1,6 +1,9 @@
 name: Publish Package
 
 on:
+  # This allows you to run the workflow manually from the Actions tab
+  workflow_dispatch:
+  # Also run on release creation (optional, you can remove this if you only want manual triggering)
   release:
     types: [created]
 
