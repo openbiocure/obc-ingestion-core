@@ -23,8 +23,6 @@ jobs:
         run: python -m build
 
       - name: Publish to GitHub Packages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python -m twine upload \
             --repository-url https://maven.pkg.github.com/${{ github.repository }} \
@@ -33,6 +31,7 @@ jobs:
             dist/*
 
       - name: Publish to PyPI
+        if: success()
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
