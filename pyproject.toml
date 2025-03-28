@@ -26,6 +26,7 @@ dev = [
     "black",
     "isort",
     "mypy",
+    "pre-commit",
 ]
 
 [tool.setuptools]
