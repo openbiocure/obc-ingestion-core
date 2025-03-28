@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install build twine
+          python -m pip install build twine
 
       - name: Build package
         run: python -m build
@@ -36,7 +36,7 @@ jobs:
           echo "username = ${{ github.actor }}" >> ~/.pypirc
           echo "password = ${{ secrets.GITHUB_TOKEN }}" >> ~/.pypirc
           
-          # Upload the package
+          # Upload the package using twine directly
           python -m twine upload --repository github dist/*
 
       - name: Publish to PyPI
