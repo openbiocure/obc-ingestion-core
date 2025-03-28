@@ -1,21 +1,34 @@
-    # Create first scope
-    scope1 = initialized_engine.create_scope()
-    service1 = scope1.resolve(ScopedService)
+"""Integration tests for Engine with actual components."""
+import pytest
+from src.core.engine import Engine
+from src.core.interfaces import IEngine
+from src.data.db_context import IDbContext, DbContext
+from src.config.yaml_config import YamlConfig
+from tests.mocks.mock_implementations import TestEntity, MockRepository
+
+def test_engine_component_resolution(initialized_engine):
+    """Test resolving various components from the engine."""
+    # Ensure we can resolve core components
+    resolved_engine = initialized_engine.resolve(IEngine)
+    assert resolved_engine is initialized_engine
+
+@pytest.mark.asyncio
+async def test_engine_repository_registration(initialized_engine):
+    """Test registering and resolving a repository."""
+    # Create mock repository
+    test_repo = MockRepository(TestEntity)
     
-    # Create second scope
-    scope2 = initialized_engine.create_scope()
-    service2 = scope2.resolve(ScopedService)
+    # Register with engine
+    initialized_engine.register(MockRepository, test_repo)
     
-    # Services should be different instances
-    assert service1 is not service2
+    # Resolve repository
+    resolved_repo = initialized_engine.resolve(MockRepository)
+    assert resolved_repo is test_repo
     
-    # Increment counters
-    assert service1.increment() == 1
-    assert service1.increment() == 2
+    # Create an entity using the repository
+    entity = TestEntity(name="Engine Test", value=42)
+    created = await resolved_repo.create(entity)
     
-    # Second service should have separate counter
-    assert service2.increment() == 1
-    
-    # Clean up
-    await scope1.dispose()
-    await scope2.dispose()
+    # Verify entity
+    assert created.name == "Engine Test"
+    assert created.value == 42

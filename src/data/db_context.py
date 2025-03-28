@@ -1,52 +1,74 @@
-from typing import AsyncContextManager, Optional, Callable, Any, Protocol
-from contextlib import asynccontextmanager
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+"""Database context implementation for SQLAlchemy async operations."""
+from typing import Protocol, Optional, Any, Dict, Union
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncEngine
+from sqlalchemy.ext.asyncio import async_sessionmaker
+from sqlalchemy.sql import Executable
+from sqlalchemy.engine import Result
 
 class IDbContext(Protocol):
-    @asynccontextmanager
-    async def begin_transaction(self) -> AsyncContextManager[None]: ...
-    async def commit(self) -> None: ...
-    async def rollback(self) -> None: ...
-    async def execute(self, statement: Any) -> Any: ...
-    async def close(self) -> None: ...
-    def get_session(self) -> AsyncSession: ...
+    """Database context interface."""
+    
+    async def initialize(self) -> None:
+        """Initialize the database context."""
+        ...
+    
+    async def close(self) -> None:
+        """Close the database context."""
+        ...
+    
+    async def execute(self, query: Executable, parameters: Optional[Dict[str, Any]] = None) -> Result:
+        """Execute a raw SQL query."""
+        ...
 
-class DbContext(IDbContext):
+class DbContext:
+    """Database context implementation for SQLAlchemy async operations."""
+    
     def __init__(self, connection_string: str):
-        self._engine = create_async_engine(connection_string)
-        self._session_factory = async_sessionmaker(
-            self._engine, expire_on_commit=False
-        )
+        """Initialize a new instance of the DbContext class."""
+        self.connection_string = connection_string
+        self._engine: Optional[AsyncEngine] = None
+        self._session_factory = None
         self._session: Optional[AsyncSession] = None
     
     async def initialize(self) -> None:
-        if self._session is None:
-            self._session = self._session_factory()
-    
-    @asynccontextmanager
-    async def begin_transaction(self) -> AsyncContextManager[None]:
-        await self.initialize()
-        async with self._session.begin():
-            yield
-    
-    async def commit(self) -> None:
-        if self._session:
-            await self._session.commit()
-    
-    async def rollback(self) -> None:
-        if self._session:
-            await self._session.rollback()
-    
-    async def execute(self, statement: Any) -> Any:
-        await self.initialize()
-        return await self._session.execute(statement)
+        """Initialize the database context."""
+        self._engine = create_async_engine(
+            self.connection_string,
+            echo=False,
+            future=True
+        )
+        self._session_factory = async_sessionmaker(
+            self._engine,
+            expire_on_commit=False,
+            class_=AsyncSession
+        )
+        self._session = self._session_factory()
     
     async def close(self) -> None:
+        """Close the database context."""
         if self._session:
             await self._session.close()
-            self._session = None
+        
+        if self._engine:
+            await self._engine.dispose()
     
-    def get_session(self) -> AsyncSession:
+    async def execute(self, query: Executable, parameters: Optional[Dict[str, Any]] = None) -> Result:
+        """Execute a raw SQL query.
+        
+        Args:
+            query: The query to execute
+            parameters: Optional parameters for the query
+            
+        Returns:
+            The result of the execution
+        """
         if self._session is None:
-            raise ValueError("Session not initialized. Call initialize() first.")
-        return self._session
+            raise RuntimeError("Database context not initialized")
+        
+        if parameters:
+            result = await self._session.execute(query, parameters)
+        else:
+            result = await self._session.execute(query)
+        
+        await self._session.commit()
+        return result

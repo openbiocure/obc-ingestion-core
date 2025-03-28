@@ -1,18 +1,46 @@
+"""Tests for the Engine module."""
 import pytest
-from src import engine
 from src.core.engine import Engine
-from src.core.dependency import IEngine
+from src.core.interfaces import IEngine
 
 def test_engine_singleton():
-    # Test that engine.initialize() always returns the same instance
-    instance1 = Engine.initialize()
-    instance2 = Engine.initialize()
-    assert instance1 is instance2
+    """Test that the engine uses the singleton pattern."""
+    # Reset the singleton first
+    Engine._instance = None
     
-    # Test that engine exported from src is also the same instance
-    assert engine is instance1
+    # Initialize twice, should get same instance
+    engine1 = Engine.initialize()
+    engine2 = Engine.initialize()
+    
+    assert engine1 is engine2
+    
+    # For the next test
+    Engine._instance = None
 
-def test_engine_resolve(initialized_engine):
-    # Test that the engine can resolve itself
-    resolved_engine = initialized_engine.resolve(IEngine)
-    assert resolved_engine is initialized_engine
+def test_engine_property():
+    """Test that the current property returns the engine instance."""
+    test_engine = Engine.initialize()
+    assert test_engine.current is test_engine
+    
+    # For the next test
+    Engine._instance = None
+
+def test_engine_register_resolve():
+    """Test registering and resolving services."""
+    # Create a test engine
+    test_engine = Engine()
+    test_engine._started = True  # Mark as started for testing
+    
+    # Create a test service
+    class TestService:
+        pass
+    
+    service = TestService()
+    
+    # Register service
+    test_engine.register(TestService, service)
+    
+    # Resolve the service
+    resolved = test_engine.resolve(TestService)
+    
+    assert resolved is service

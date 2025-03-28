@@ -1,108 +1,48 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "herpai-lib"
 version = "0.1.0"
 description = "HerpAI Core Library, Accelerating the discovery of a functional cure for HSV-1 and HSV-2 using AI."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
 authors = [
     {name = "OpenBioCure Contributors", email = "openbiocure@gmail.com"}
 ]
-license = {text = "MIT"}
-readme = "README.md"
-requires-python = ">=3.9"
 dependencies = [
-    # Core dependencies
-    "sqlalchemy>=2.0",
-    "pydantic>=2.0",
-    "python-dotenv>=1.0",
-    "requests>=2.31",
+    "sqlalchemy>=2.0.0",
     "pyyaml>=6.0",
-    "tqdm>=4.65",
-    "typing-extensions>=4.7",
-    "dependency-injector>=4.41.0",
-    
-    # Database
-    "alembic>=1.11",
-    "psycopg2-binary>=2.9",
-    
-    # Testing
-    "pytest>=7.4",
-    "pytest-cov>=4.1",
-    "pytest-asyncio>=0.21",
-    "aiosqlite>=0.19",
-    "greenlet>=2.0"
+    "aiosqlite>=0.17.0",
 ]
-
-[project.urls]
-Homepage = "https://github.com/openbiocure/herpai-lib"
-Documentation = "https://herpai-lib.readthedocs.io"
-Repository = "https://github.com/openbiocure/herpai-lib.git"
-"Bug Tracker" = "https://github.com/openbiocure/herpai-lib/issues"
 
 [project.optional-dependencies]
 dev = [
-    # Code formatting and linting
-    "black>=23.7",
-    "isort>=5.12",
-    "flake8>=6.1",
-    "mypy>=1.4",
-    "pre-commit>=3.3",
-    
-    # Type checking
-    "types-PyYAML",
-    "types-requests",
-    "types-tqdm",
-    "dependency-injector>=4.41.0"
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.18.0",
+    "pytest-cov>=4.0.0",
+    "black",
+    "isort",
+    "mypy",
 ]
-
-docs = [
-    "sphinx>=7.0",
-    "sphinx-rtd-theme>=1.2",
-    "sphinx-autodoc-typehints>=1.23",
-]
-
-[build-system]
-requires = ["setuptools>=65.0", "wheel"]
-build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-include-package-data = true
+packages = ["src"]
+package-dir = {"" = "."}
 
 [tool.black]
-line-length = 100
-target-version = ['py39']
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-    | \.hg
-    | \.mypy_cache
-    | \.tox
-    | \.venv
-    | _build
-    | buck-out
-    | build
-    | dist
-)/
-'''
+line-length = 88
+target-version = ["py39"]
 
 [tool.isort]
 profile = "black"
-multi_line_output = 3
-line_length = 100
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-ensure_newline_before_comments = true
-skip = [".gitignore", ".dockerignore"]
+line_length = 88
 
 [tool.mypy]
 python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
-check_untyped_defs = true
-ignore_missing_imports = true
-exclude = [
-    'tests/',
-    'docs/',
-    'examples/',
-]
+disallow_incomplete_defs = true
