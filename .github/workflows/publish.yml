@@ -7,6 +7,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      # This permission is required for trusted publishing
+      id-token: write
+      # This permission is required for checking out the code
+      contents: read
+    
     steps:
       - uses: actions/checkout@v3
       
@@ -18,26 +24,19 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install build twine
+          python -m pip install build
 
       - name: Build package
         run: python -m build
 
-      # Temporarily commenting out GitHub Packages step due to URL formatting issues
-      # We'll focus on getting PyPI working first
-      #- name: Publish to GitHub Packages
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #  run: |
-      #    python -m twine upload \
-      #      --repository-url https://maven.pkg.github.com/${{ github.repository }} \
-      #      --username ${{ github.actor }} \
-      #      --password ${{ secrets.GITHUB_TOKEN }} \
-      #      dist/*
+      - name: Publish to PyPI via Trusted Publisher
+        uses: pypa/gh-action-pypi-publish@release/v1
+        continue-on-error: true
+        id: trusted-publish
+        # No credentials needed - the action will use OIDC
 
-      - name: Publish to PyPI
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: |
-          python -m twine upload dist/*
+      - name: Publish to PyPI via API Token
+        if: steps.trusted-publish.outcome == 'failure'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
