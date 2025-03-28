@@ -17,7 +17,7 @@ Come chat with us on Discord: [HerpAI Discord Server](https://discord.com/channe
 - 🔍 **Specification Pattern** - Fluent query filtering
 - 🧵 **Async Support** - Full async/await patterns
 - 📝 **Type Safety** - Generic interfaces with Python typing
-- ⚙️ **YAML Configuration** - Structured config with dotted access
+- ⚙️ **Configuration Management** - YAML with dataclass validation and OOP interface
 - 🚀 **Startup Tasks** - Initialization sequence control
 - 🪵 **Structured Logging** - Consistent format across components
 
@@ -59,33 +59,32 @@ repository = engine.resolve(IRepository[YourEntity])
 entity = await repository.create(name="Example")
 ```
 
-### Configuration with YAML
+### Configuration with Dataclasses
 
-Create a `config.yaml` file:
-
-```yaml
-database:
-  host: "localhost"
-  port: 5432
-  database: "herpai"
-  username: "postgres"
-  password: "your_password"
-  dialect: "postgresql"
-  driver: "psycopg2"
-```
-
-Load it in your application:
+HerpAI-Lib supports strongly-typed configuration using dataclasses:
 
 ```python
 from src import engine
-from src.core.startup import ConfigurationStartupTask
+from src.core.app_config_startup import AppConfigStartupTask
+from src.config.dataclass_config import AppConfig
 
 # Add configuration startup task
-engine.add_startup_task(ConfigurationStartupTask("config.yaml"))
+engine.add_startup_task(AppConfigStartupTask("config.yaml"))
 
 # Initialize the engine
 engine.initialize()
 engine.start()
+
+# Get the configuration
+config = AppConfig.get_instance()
+
+# Access agent configuration
+virology_agent = config.get_agent("virology")
+print(f"Model: {virology_agent.model}")
+print(f"Temperature: {virology_agent.temperature}")
+
+# Get database session
+db_session = config.get_db_session()
 ```
 
 ### Custom Startup Tasks
@@ -107,6 +106,20 @@ engine.add_startup_task(DatabaseSetupStartupTask())
 ---
 
 ## 📋 Examples
+
+Explore the following examples to learn how to use HerpAI-Lib:
+
+| Example | Description |
+|---------|-------------|
+| [01_basic_todo.py](examples/01_basic_todo.py) | Basic repository pattern with a Todo entity |
+| [02_yaml_config.py](examples/02_yaml_config.py) | Working with YAML configuration and dotted access |
+| [03_app_config.py](examples/03_app_config.py) | Using strongly-typed dataclass configuration |
+| [04_custom_startup.py](examples/04_custom_startup.py) | Creating custom startup tasks with ordering |
+| [05_database_operations.py](examples/05_database_operations.py) | Advanced database operations with repositories |
+| [06_autodiscovery.py](examples/06_autodiscovery.py) | Auto-discovery of startup tasks and components |
+| [07_multi_config.py](examples/07_multi_config.py) | Working with multiple configuration sources |
+
+For more details on each example, see the [examples README](examples/README.md).
 
 ### Basic Todo Example
 
@@ -206,6 +219,49 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+### Using AppConfig with Full Type Safety
+
+An example showing how to use the strongly-typed configuration classes:
+
+```python
+# See examples/app_config_example.py
+import asyncio
+from src import engine
+from src.core.app_config_startup import AppConfigStartupTask
+from src.config.dataclass_config import AppConfig
+
+async def main():
+    # Add startup task for AppConfig
+    engine.add_startup_task(AppConfigStartupTask("config.yaml"))
+    
+    # Initialize and start the engine 
+    engine.initialize()
+    engine.start()
+    
+    # Get AppConfig
+    app_config = AppConfig.get_instance()
+    
+    # Display agent configurations
+    print("Agent Configurations:")
+    for name, agent in app_config.agents.items():
+        print(f"\n{name}:")
+        print(f"  Model: {agent.model_provider}/{agent.model}")
+        print(f"  Temperature: {agent.temperature}")
+        print(f"  Max Tokens: {agent.max_tokens}")
+        print(f"  Tags: {', '.join(agent.tags) if agent.tags else 'None'}")
+        print(f"  Research Domain: {'Yes' if agent.is_research_domain else 'No'}")
+    
+    # Get a database session
+    try:
+        session = app_config.get_db_session()
+        print(f"\nConnected to database: {app_config.db_config.database}")
+    except Exception as e:
+        print(f"Database connection error: {str(e)}")
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
 ---
 
 ## 📁 Library Structure
@@ -215,12 +271,14 @@ src/
 ├── config/                   # Configuration management
 │   ├── settings.py           # Settings management
 │   ├── environment.py        # Environment variables
-│   └── yaml_config.py        # YAML configuration
+│   ├── yaml_config.py        # Basic YAML configuration
+│   └── dataclass_config.py   # Typed dataclass configuration
 │
 ├── core/                     # Core engine components
 │   ├── engine.py             # DI container and engine
 │   ├── dependency.py         # Dependency injection
 │   ├── startup.py            # Startup tasks
+│   ├── app_config_startup.py # AppConfig startup task
 │   └── exceptions.py         # Core exceptions
 │
 ├── data/                     # Data access
@@ -251,6 +309,7 @@ src/
 - SQLAlchemy
 - PyYAML
 - aiosqlite
+- dataclasses (built-in for Python 3.9+)
 
 ---
 

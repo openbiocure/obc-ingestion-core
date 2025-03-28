@@ -1,12 +1,13 @@
-from ..core.startup import StartupTask
+from .startup import StartupTask
 from ..config.dataclass_config import AppConfig
 
 class AppConfigStartupTask(StartupTask):
     """Startup task for loading AppConfig."""
     
-    def __init__(self, config_file: str):
-        self.config_file = config_file
+    # Run early in the startup sequence
+    order = 20
     
     def execute(self) -> None:
         """Load AppConfig from the YAML file."""
-        AppConfig.load(self.config_file)
+        config_path = self._config.get('path', 'config.yaml')
+        AppConfig.load(config_path)

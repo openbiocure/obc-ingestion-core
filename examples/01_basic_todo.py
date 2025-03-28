@@ -1,24 +1,17 @@
+"""
+Basic Todo Example
+
+This example demonstrates the core repository pattern
+with a simple Todo entity.
+"""
 import asyncio
 from typing import Optional, List, Protocol
 from sqlalchemy.orm import Mapped, mapped_column
-import os
 
-# Import from your library
 from src import engine
 from src.data.entity import BaseEntity
 from src.data.repository import IRepository, Repository
 from src.data.specification import Specification
-from src.core.startup import ConfigurationStartupTask, StartupTask
-from src.config.yaml_config import YamlConfig
-
-# Define a custom startup task
-class DatabaseSetupStartupTask(StartupTask):
-    """Startup task to set up the database."""
-    
-    def execute(self) -> None:
-        print("Preparing database...")
-        # This would typically create tables, run migrations, etc.
-        # For this example, we'll just print a message
 
 # Define a Todo entity
 class Todo(BaseEntity):
@@ -33,7 +26,7 @@ class ITodoRepository(IRepository[Todo], Protocol):
     async def find_completed(self) -> List[Todo]: ...
     async def find_by_title(self, title: str) -> List[Todo]: ...
 
-# Define a Todo specification
+# Define specifications
 class CompletedTodoSpecification(Specification[Todo]):
     def to_expression(self):
         return Todo.completed == True
@@ -45,7 +38,7 @@ class TitleContainsSpecification(Specification[Todo]):
     def to_expression(self):
         return Todo.title.contains(self.text)
 
-# Define the TodoRepository implementation
+# Implementation of the repository
 class TodoRepository:
     def __init__(self, session):
         self._base_repo = Repository(session, Todo)
@@ -72,29 +65,16 @@ class TodoRepository:
         return await self.find(TitleContainsSpecification(title))
 
 async def main():
-    # Add startup tasks
-    engine.add_startup_task(ConfigurationStartupTask("config.yaml"))
-    engine.add_startup_task(DatabaseSetupStartupTask())
-    
     # Initialize and start the engine 
-    # This will execute all startup tasks
     engine.initialize()
     engine.start()
     
-    # Access configuration
-    config = YamlConfig.get_instance()
-    db_config = config.get('database', {})
-    print(f"Connected to database: {db_config.get('database')} on {db_config.get('host')}")
-    
-    # Print some agent configurations
-    agents = config.get_agent_configs()
-    print(f"Configured agents: {', '.join(agents.keys())}")
-    
-    # Resolve database context
+    # Get database context and create repository
     from src.data.db_context import DbContext
     db_context = engine.resolve(DbContext)
+    await db_context.initialize()
     
-    # Create a repository
+    # Create repository
     todo_repo = TodoRepository(db_context.get_session())
     
     # Register repository with engine
@@ -105,8 +85,8 @@ async def main():
     
     # Create a todo
     todo = await todo_repository.create(
-        title="Learn HerpAI-Lib with Configuration",
-        description="Implement configuration and startup tasks",
+        title="Learn HerpAI-Lib",
+        description="Implement repository pattern with dependency injection",
         completed=False
     )
     
@@ -123,6 +103,13 @@ async def main():
     # Find completed todos
     completed_todos = await todo_repository.find_completed()
     print(f"Found {len(completed_todos)} completed todos")
+    
+    # Find by title
+    todos_with_learn = await todo_repository.find_by_title("Learn")
+    print(f"Found {len(todos_with_learn)} todos containing 'Learn' in the title")
+    
+    # Clean up
+    await db_context.close()
 
 if __name__ == "__main__":
     asyncio.run(main())
