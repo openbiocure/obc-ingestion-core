@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -22,16 +23,19 @@ jobs:
       - name: Build package
         run: python -m build
 
-      - name: Publish to GitHub Packages
-        run: |
-          python -m twine upload \
-            --repository-url https://maven.pkg.github.com/${{ github.repository }} \
-            --username ${{ github.actor }} \
-            --password ${{ secrets.GITHUB_TOKEN }} \
-            dist/*
+      # Temporarily commenting out GitHub Packages step due to URL formatting issues
+      # We'll focus on getting PyPI working first
+      #- name: Publish to GitHub Packages
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #  run: |
+      #    python -m twine upload \
+      #      --repository-url https://maven.pkg.github.com/${{ github.repository }} \
+      #      --username ${{ github.actor }} \
+      #      --password ${{ secrets.GITHUB_TOKEN }} \
+      #      dist/*
 
       - name: Publish to PyPI
-        if: success()
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
