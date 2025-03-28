@@ -17,20 +17,24 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install build twine
+          python -m pip install -e ".[dev]"
 
       - name: Build package
-        run: python -m build
+        run: make build
 
       - name: Publish to GitHub Packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python -m twine upload --repository-url https://maven.pkg.github.com/${{ github.repository }} dist/*
+          # Configure GitHub Packages credentials
+          echo "[github]" >> ~/.pypirc
+          echo "username=${{ github.actor }}" >> ~/.pypirc
+          echo "password=${{ secrets.GITHUB_TOKEN }}" >> ~/.pypirc
+          echo "repository=https://maven.pkg.github.com/${{ github.repository }}" >> ~/.pypirc
+          make publish-github
 
       - name: Publish to PyPI
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: |
-          python -m twine upload dist/*
+        run: make publish-pypi
