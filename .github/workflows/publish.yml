@@ -26,18 +26,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Configure GitHub Packages credentials
-          echo "[distutils]" > ~/.pypirc
-          echo "index-servers =" >> ~/.pypirc
-          echo "    github" >> ~/.pypirc
-          echo "" >> ~/.pypirc
-          echo "[github]" >> ~/.pypirc
-          echo "repository = https://maven.pkg.github.com/${{ github.repository }}" >> ~/.pypirc
-          echo "username = ${{ github.actor }}" >> ~/.pypirc
-          echo "password = ${{ secrets.GITHUB_TOKEN }}" >> ~/.pypirc
-          
-          # Upload the package using twine directly
-          python -m twine upload --repository github dist/*
+          python -m twine upload \
+            --repository-url https://maven.pkg.github.com/${{ github.repository }} \
+            --username ${{ github.actor }} \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            dist/*
 
       - name: Publish to PyPI
         env:
