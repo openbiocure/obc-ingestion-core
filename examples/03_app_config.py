@@ -6,17 +6,10 @@ AppConfig with dataclasses for configuration.
 """
 import asyncio
 from src import engine
-from src.core.app_config_startup import AppConfigStartupTask
 from src.config.dataclass_config import AppConfig
 
 async def main():
-    # Add AppConfig startup task
-    # Note: In production, this would be auto-discovered
-    app_config_task = AppConfigStartupTask()
-    app_config_task.configure({'path': 'config.yaml'})
-    engine.add_startup_task(app_config_task)
-    
-    # Initialize and start the engine
+    # Initialize and start the engine with auto-discovered tasks
     engine.initialize()
     engine.start()
     
@@ -47,7 +40,7 @@ async def main():
         print(f"  Tags: {', '.join(agent.tags) if agent.tags else 'None'}")
         print(f"  Research Domain: {'Yes' if agent.is_research_domain else 'No'}")
     
-    # Try to get a database session
+    # Get a database session
     try:
         session = app_config.get_db_session()
         print(f"\nSuccessfully connected to database: {app_config.db_config.database}")

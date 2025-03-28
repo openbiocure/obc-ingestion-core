@@ -31,7 +31,7 @@ async def main():
     engine.start()
     
     # Access YAML configuration
-    yaml_config = YamlConfig.get_instance()
+    yaml_config = engine.resolve(YamlConfig)
     
     print("Multi-configuration Example:")
     print("===========================")

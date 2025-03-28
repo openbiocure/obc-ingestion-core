@@ -71,11 +71,10 @@ async def main():
         status = "Enabled" if task.enabled else "Disabled"
         print(f"- {task_name} (Order: {task.order}, Status: {status})")
     
-    # Access configuration
-    from src.config.yaml_config import YamlConfig
-    config = YamlConfig.get_instance()
-    
     # Print startup task configuration
+    from src.config.yaml_config import YamlConfig
+    config = engine.resolve(YamlConfig)
+    
     print("\nStartup Task Configuration:")
     startup_tasks_config = config.get('startup_tasks', {})
     for task_name, task_config in startup_tasks_config.items():

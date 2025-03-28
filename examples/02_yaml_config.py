@@ -7,21 +7,14 @@ system with dotted access.
 import asyncio
 from src import engine
 from src.config.yaml_config import YamlConfig
-from src.core.startup import ConfigurationStartupTask
 
 async def main():
-    # Add configuration startup task
-    # Note: In production, this would be auto-discovered
-    config_task = ConfigurationStartupTask()
-    config_task.configure({'path': 'config.yaml'})
-    engine.add_startup_task(config_task)
-    
-    # Initialize and start the engine
+    # Initialize and start the engine with auto-discovered tasks
     engine.initialize()
     engine.start()
     
     # Get the configuration
-    config = YamlConfig.get_instance()
+    config = engine.resolve(YamlConfig)
     
     # Access configuration using dot notation
     print("YAML Configuration Example:")

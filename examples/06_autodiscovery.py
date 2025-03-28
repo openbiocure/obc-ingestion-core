@@ -42,7 +42,7 @@ async def main():
     print("\nLoaded Configuration:")
     try:
         from src.config.yaml_config import YamlConfig
-        config = YamlConfig.get_instance()
+        config = engine.resolve(YamlConfig)
         print(f"App Default Model Provider: {config.get('app.default_model_provider')}")
         print(f"Database Host: {config.get('database.host')}")
         
