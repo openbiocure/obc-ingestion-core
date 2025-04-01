@@ -1,6 +1,6 @@
 import click
-from . import engine
-from .__version__ import __version__
+from core import engine
+from __version__ import __version__
 
 @click.group()
 @click.version_option(version=__version__)
