@@ -7,7 +7,7 @@ with auto-discovery, ordering, and configuration.
 import asyncio
 import logging
 from src import engine
-from src.core.startup import StartupTask
+from src.core.startup_task import StartupTask
 
 # Configure logging
 logging.basicConfig(

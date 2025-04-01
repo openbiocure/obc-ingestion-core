@@ -7,7 +7,7 @@ configuration sources - YAML and environment variables.
 import asyncio
 import os
 from src import engine
-from src.core.startup import StartupTask
+from src.core.startup_task import StartupTask
 from src.config.yaml_config import YamlConfig
 from src.config.environment import Environment
 
