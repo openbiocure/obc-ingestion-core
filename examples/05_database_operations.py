@@ -11,10 +11,10 @@ from datetime import datetime, UTC
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, func
 
-from src import engine
-from src.data.entity import BaseEntity
-from src.data.repository import IRepository
-from src.data.specification import Specification
+from openbiocure_corelib import engine
+from openbiocure_corelib.data.entity import BaseEntity
+from openbiocure_corelib.data.repository import IRepository
+from openbiocure_corelib.data.specification import Specification
 
 # Define entities
 class User(BaseEntity):
@@ -72,7 +72,7 @@ class PublishedPostSpecification(Specification[Post]):
 async def main():
     # Initialize and start the engine
     engine.initialize()
-    engine.start()
+    await engine.start()
     
     # Resolve repositories
     user_repository = engine.resolve(IUserRepository)

@@ -75,6 +75,9 @@ class ServiceCollection:
         """
         service = self._services.get(service_type)
         if service is not None:
+            # Check if it's a factory function and call it if it is
+            if callable(service) and not isinstance(service, type):
+                return service()
             return service
         
         # If it's a scoped service, we need a scope

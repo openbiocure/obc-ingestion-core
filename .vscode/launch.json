@@ -13,6 +13,17 @@
       }
     },
     {
+      "name": "Python: 01_basic_todo.py",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/examples/01_basic_todo.py",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+          "PYTHONPATH": "${workspaceFolder}"
+      }
+    },
+    {
       "name": "Python: Debug Tests",
       "type": "debugpy",
       "request": "launch",

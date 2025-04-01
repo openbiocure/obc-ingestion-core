@@ -12,8 +12,8 @@ GITHUB_REPO := HerpAI-Lib
 
 # Test and coverage settings
 TESTS_DIR := tests
-SRC_DIR := src
-COVERAGE_OPTIONS := --cov=$(SRC_DIR) --cov-report=term-missing
+openbiocure_corelib_DIR := openbiocure_corelib
+COVERAGE_OPTIONS := --cov=$(openbiocure_corelib_DIR) --cov-report=term-missing
 
 # OS specific commands
 ifeq ($(OS),Windows_NT)
@@ -76,15 +76,15 @@ test: check-venv ## Run tests with coverage
 
 lint: check-venv ## Run code linters (flake8, mypy)
 	@echo "$(BLUE)Running linters...$(NC)"
-	$(VENV_RUN) flake8 $(SRC_DIR) $(TESTS_DIR)
-	$(VENV_RUN) mypy $(SRC_DIR) $(TESTS_DIR)
-	$(VENV_RUN) black --check $(SRC_DIR) $(TESTS_DIR)
-	$(VENV_RUN) isort --check-only $(SRC_DIR) $(TESTS_DIR)
+	$(VENV_RUN) flake8 $(openbiocure_corelib_DIR) $(TESTS_DIR)
+	$(VENV_RUN) mypy $(openbiocure_corelib_DIR) $(TESTS_DIR)
+	$(VENV_RUN) black --check $(openbiocure_corelib_DIR) $(TESTS_DIR)
+	$(VENV_RUN) isort --check-only $(openbiocure_corelib_DIR) $(TESTS_DIR)
 
 format: check-venv ## Format code with black and isort
 	@echo "$(BLUE)Formatting code...$(NC)"
-	$(VENV_RUN) black $(SRC_DIR) $(TESTS_DIR)
-	$(VENV_RUN) isort $(SRC_DIR) $(TESTS_DIR)
+	$(VENV_RUN) black $(openbiocure_corelib_DIR) $(TESTS_DIR)
+	$(VENV_RUN) isort $(openbiocure_corelib_DIR) $(TESTS_DIR)
 
 check: lint test ## Run all quality checks (linting and tests)
 	@echo "$(GREEN)All checks passed!$(NC)"

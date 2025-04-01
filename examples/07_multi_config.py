@@ -6,10 +6,10 @@ configuration sources - YAML and environment variables.
 """
 import asyncio
 import os
-from src import engine
-from src.core.startup import StartupTask
-from src.config.yaml_config import YamlConfig
-from src.config.environment import Environment
+from openbiocure_corelib import engine
+from openbiocure_corelib.core.startup import StartupTask
+from openbiocure_corelib.config.yaml_config import YamlConfig
+from openbiocure_corelib.config.environment import Environment
 
 # Define a startup task to load environment variables
 class EnvironmentStartupTask(StartupTask):
@@ -18,7 +18,7 @@ class EnvironmentStartupTask(StartupTask):
     # Run before configuration
     order = 5
     
-    def execute(self) -> None:
+    async def execute(self) -> None:
         # Set some environment variables for demonstration
         os.environ["HERPAI_DB_HOST"] = "env-db-host"
         os.environ["HERPAI_DB_PORT"] = "5433"
@@ -28,7 +28,7 @@ class EnvironmentStartupTask(StartupTask):
 async def main():
     # Initialize and start the engine
     engine.initialize()
-    engine.start()
+    await engine.start()
     
     # Access YAML configuration
     yaml_config = engine.resolve(YamlConfig)

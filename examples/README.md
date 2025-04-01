@@ -12,6 +12,28 @@ python examples/01_basic_todo.py
 
 Most examples require a `config.yaml` file in the current directory. You can use the provided sample configuration.
 
+### Note About Async Usage
+
+All examples use Python's async/await syntax since the engine's startup process is asynchronous. Each example follows this basic pattern:
+
+```python
+import asyncio
+from openbiocure_corelib import engine
+
+async def main():
+    # Initialize the engine
+    engine.initialize()
+    
+    # Start the engine (async operation)
+    await engine.start()
+    
+    # Perform operations using the engine
+    ...
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
 ## Available Examples
 
 | Example | Description |
@@ -23,6 +45,50 @@ Most examples require a `config.yaml` file in the current directory. You can use
 | [05_database_operations.py](05_database_operations.py) | Advanced database operations with repositories |
 | [06_autodiscovery.py](06_autodiscovery.py) | Auto-discovery of startup tasks and components |
 | [07_multi_config.py](07_multi_config.py) | Working with multiple configuration sources |
+
+---
+
+## Engine Startup Process
+
+The HerpAI-Lib engine has an asynchronous startup process that handles:
+
+1. Registering core services
+2. Completing repository registrations
+3. Discovering and executing startup tasks
+
+### Async Startup Tasks
+
+Startup tasks in HerpAI-Lib have an asynchronous `execute()` method:
+
+```python
+class DatabaseSchemaStartupTask(StartupTask):
+    """Startup task that creates the database schema."""
+    
+    order = 50  # Execution order (lower numbers run first)
+    
+    async def execute(self):
+        """Create database schema."""
+        # This is an async method that can perform async operations like:
+        # - Database schema creation
+        # - API connections
+        # - File operations
+        # - Model loading
+        await some_async_operation()
+```
+
+### Starting the Engine
+
+When using the engine in your application, make sure to await the start method:
+
+```python
+# Initialize the engine (synchronous operation)
+engine.initialize()
+
+# Start the engine (asynchronous operation)
+await engine.start()
+
+# Now the engine is fully initialized and ready to use
+```
 
 ---
 
@@ -177,6 +243,7 @@ This example shows how to create and use custom startup tasks:
 - Defining startup tasks with execution ordering
 - Configuring tasks through YAML
 - Task auto-discovery and execution
+- Using async methods for startup tasks
 
 ```python
 # Define a custom startup task
@@ -186,7 +253,7 @@ class DatabaseInitializationTask(StartupTask):
     # Run after configuration is loaded (order 10-20)
     order = 30
     
-    def execute(self) -> None:
+    async def execute(self) -> None:
         """Execute the database initialization."""
         logger.info("Initializing database...")
         

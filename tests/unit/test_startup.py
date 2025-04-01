@@ -1,7 +1,7 @@
 """Tests for the Startup Task system."""
 import pytest
-from src.core.startup_task import StartupTask
-from src.core.startup_task_executor import StartupTaskExecutor
+from openbiocure_corelib.core.startup_task import StartupTask
+from openbiocure_corelib.core.startup_task_executor import StartupTaskExecutor
 from tests.mocks.mock_implementations import MockStartupTask
 
 def test_startup_task_ordering():

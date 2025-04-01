@@ -1,7 +1,7 @@
 """Integration tests for DbContext and database operations."""
 import pytest
 from sqlalchemy import text
-from src.data.db_context import DbContext
+from openbiocure_corelib.data.db_context import DbContext
 from tests.mocks.mock_implementations import TestEntity
 
 @pytest.mark.asyncio

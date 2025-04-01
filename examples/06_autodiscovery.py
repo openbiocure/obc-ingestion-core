@@ -6,8 +6,8 @@ startup tasks and other components.
 """
 import asyncio
 import logging
-from src import engine
-from src.core.startup import StartupTask
+from openbiocure_corelib import engine
+from openbiocure_corelib.core.startup import StartupTask
 
 # Configure logging
 logging.basicConfig(
@@ -24,7 +24,7 @@ class ExampleAutoDiscoveredTask(StartupTask):
     order = 100  # Run late in the sequence
     enabled = True
     
-    def execute(self) -> None:
+    async def execute(self) -> None:
         """Execute the task."""
         logger.info("Auto-discovered task executed!")
         logger.info(f"Task configuration: {self._config}")
@@ -32,7 +32,7 @@ class ExampleAutoDiscoveredTask(StartupTask):
 async def main():
     # Let the engine initialize without manually registering any tasks
     engine.initialize()
-    engine.start()
+    await engine.start()
     
     print("\nAuto-discovered Startup Tasks:")
     for task_name, task in engine._startup_task_executor._tasks.items():
@@ -41,7 +41,7 @@ async def main():
     
     print("\nLoaded Configuration:")
     try:
-        from src.config.yaml_config import YamlConfig
+        from openbiocure_corelib.config.yaml_config import YamlConfig
         config = engine.resolve(YamlConfig)
         print(f"App Default Model Provider: {config.get('app.default_model_provider')}")
         print(f"Database Host: {config.get('database.host')}")

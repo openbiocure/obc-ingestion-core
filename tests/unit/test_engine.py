@@ -1,7 +1,7 @@
 """Tests for the Engine module."""
 import pytest
-from src.core.engine import Engine
-from src.core.interfaces import IEngine
+from openbiocure_corelib.core.engine import Engine
+from openbiocure_corelib.core.interfaces import IEngine
 
 def test_engine_singleton():
     """Test that the engine uses the singleton pattern."""

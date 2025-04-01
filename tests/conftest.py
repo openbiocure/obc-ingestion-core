@@ -8,14 +8,14 @@ import tempfile
 import yaml
 from sqlalchemy import text
 
-# Add parent directory to path to make src importable
+# Add parent directory to path to make openbiocure_corelib importable
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from src.core.engine import Engine
-from src.core.interfaces import IEngine
-from src.core.startup_task import StartupTask
-from src.data.db_context import DbContext, IDbContext
-from src.data.entity import BaseEntity
+from openbiocure_corelib.core.engine import Engine
+from openbiocure_corelib.core.interfaces import IEngine
+from openbiocure_corelib.core.startup_task import StartupTask
+from openbiocure_corelib.data.db_context import DbContext, IDbContext
+from openbiocure_corelib.data.entity import BaseEntity
 from tests.mocks.mock_implementations import TestEntity, MockRepository
 
 # Override event loop for pytest-asyncio

@@ -1,0 +1,21 @@
+app:
+  default_model_provider: claude
+  agents:
+    virology:
+      model_provider: claude
+      model: claude-3-7-sonnet-latest
+      prompt_version: v1
+      cache: true
+      max_tokens: 2500
+      temperature: 0.4
+      tags:
+        - HSV
+        - herpesvirus
+      is_research_domain: true
+
+# SQLite configuration
+database:
+  dialect: "sqlite"
+  driver: "aiosqlite"
+  database: "herpai.db"
+  is_memory_db: false  # Set to true to use in-memory database

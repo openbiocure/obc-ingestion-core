@@ -1,0 +1,16 @@
+app:
+  default_model_provider: claude
+  agents:
+    example_agent:
+      model_provider: claude
+      model: claude-3-7-sonnet-latest
+      prompt_version: v1
+      cache: false
+      max_tokens: 1000
+      temperature: 0.7
+
+# In-memory SQLite configuration for testing and development
+database:
+  dialect: "sqlite"
+  driver: "aiosqlite"
+  is_memory_db: true

@@ -6,8 +6,8 @@ with auto-discovery, ordering, and configuration.
 """
 import asyncio
 import logging
-from src import engine
-from src.core.startup import StartupTask
+from openbiocure_corelib import engine
+from openbiocure_corelib.core.startup import StartupTask
 
 # Configure logging
 logging.basicConfig(
@@ -24,7 +24,7 @@ class DatabaseInitializationTask(StartupTask):
     # Run after configuration is loaded (order 10-20)
     order = 30
     
-    def execute(self) -> None:
+    async def execute(self) -> None:
         """Execute the database initialization."""
         logger.info("Initializing database...")
         
@@ -45,7 +45,7 @@ class ModelInitializationTask(StartupTask):
     # Run after database initialization
     order = 40
     
-    def execute(self) -> None:
+    async def execute(self) -> None:
         """Execute the model initialization."""
         logger.info("Initializing AI models...")
         
@@ -63,7 +63,7 @@ async def main():
     # Initialize and start the engine
     # The engine will auto-discover our tasks
     engine.initialize()
-    engine.start()
+    await engine.start()
     
     # Print information about discovered tasks
     print("\nStartup Tasks:")
@@ -72,7 +72,7 @@ async def main():
         print(f"- {task_name} (Order: {task.order}, Status: {status})")
     
     # Print startup task configuration
-    from src.config.yaml_config import YamlConfig
+    from openbiocure_corelib.config.yaml_config import YamlConfig
     config = engine.resolve(YamlConfig)
     
     print("\nStartup Task Configuration:")

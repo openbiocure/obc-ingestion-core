@@ -1,0 +1,55 @@
+app:
+  default_model_provider: claude
+  agents:
+    virology:
+      model_provider: claude
+      model: claude-3-7-sonnet-latest
+      prompt_version: v1
+      cache: true
+      max_tokens: 2500
+      temperature: 0.4
+      tags:
+        - HSV
+        - herpesvirus
+        - latency
+        - gene regulation
+      is_research_domain: true
+    transmission_prevention:
+      model_provider: claude
+      model: claude-3-7-sonnet-latest
+      prompt_version: v1
+      cache: true
+      max_tokens: 2000
+      temperature: 0.3
+      tags:
+        - transmission
+        - prophylaxis
+        - condom
+        - vaccination
+      is_research_domain: true
+    report_generator:
+      model_provider: claude
+      model: claude-3-7-sonnet-latest
+      prompt_version: default
+      cache: false
+      max_tokens: 1000
+      temperature: 0.0
+      tags: []
+      is_research_domain: false
+
+# PostgreSQL configuration
+database:
+  dialect: "postgresql"
+  driver: "psycopg2"
+  host: "localhost"
+  port: 5432
+  database: "herpai"
+  username: "postgres"
+  password: "your_password"
+
+# SQLite configuration (uncomment to use instead of PostgreSQL)
+# database:
+#  dialect: "sqlite"
+#  driver: "aiosqlite"
+#  database: "herpai.db"
+#  is_memory_db: false  # Set to true to use in-memory database

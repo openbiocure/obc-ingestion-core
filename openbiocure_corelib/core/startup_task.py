@@ -1,7 +1,9 @@
 from typing import Dict, ClassVar, Any
-from abc import ABC, abstractmethod
+import logging
 
-class StartupTask(ABC):
+logger = logging.getLogger(__name__)
+
+class StartupTask:
     """Base class for startup tasks."""
     
     # Class variables to define behavior
@@ -18,11 +20,6 @@ class StartupTask(ABC):
         return self.__class__.__name__
     
     @property
-    def order(self) -> int:
-        """Get the order of the startup task."""
-        return self.__class__.order
-    
-    @property
     def enabled(self) -> bool:
         """Check if the startup task is enabled."""
         return self._is_enabled
@@ -35,7 +32,19 @@ class StartupTask(ABC):
         if 'enabled' in config:
             self._is_enabled = bool(config['enabled'])
     
-    @abstractmethod
-    def execute(self) -> None:
-        """Execute the startup task."""
+    async def execute(self) -> None:
+        """Execute the startup task.
+        
+        This method is an async coroutine that should be awaited.
+        If a subclass doesn't need async functionality, it can still
+        implement it as a regular method - it will be converted to a coroutine.
+        """
         pass
+
+    def __init_subclass__(cls, **kwargs):
+        """
+        Ensure that subclasses are not considered abstract.
+        This prevents the class from being skipped during discovery.
+        """
+        super().__init_subclass__(**kwargs)
+        return cls

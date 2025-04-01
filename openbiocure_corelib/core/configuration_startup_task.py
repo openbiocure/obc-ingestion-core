@@ -10,11 +10,11 @@ class ConfigurationStartupTask(StartupTask):
     # Run very early
     order = 10
     
-    def execute(self) -> None:
+    async def execute(self) -> None:
         """Load configuration from the YAML file."""
         try:
             # Lazy import to avoid circular dependencies
-            yaml_config_module = importlib.import_module('src.config.yaml_config')
+            yaml_config_module = importlib.import_module('openbiocure_corelib.config.yaml_config')
             YamlConfig = getattr(yaml_config_module, 'YamlConfig')
             
             config_path = self._config.get('path', 'config.yaml')

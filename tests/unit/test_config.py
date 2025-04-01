@@ -3,7 +3,7 @@ import pytest
 import tempfile
 import os
 import yaml
-from src.config.yaml_config import YamlConfig
+from openbiocure_corelib.config.yaml_config import YamlConfig
 
 def test_yaml_config_load():
     """Test loading YAML configuration."""

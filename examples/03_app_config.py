@@ -5,13 +5,13 @@ This example demonstrates how to use the strongly-typed
 AppConfig with dataclasses for configuration.
 """
 import asyncio
-from src import engine
-from src.config.dataclass_config import AppConfig
+from openbiocure_corelib import engine
+from openbiocure_corelib.config.dataclass_config import AppConfig
 
 async def main():
     # Initialize and start the engine with auto-discovered tasks
     engine.initialize()
-    engine.start()
+    await engine.start()
     
     # Get the typed configuration
     app_config = AppConfig.get_instance()

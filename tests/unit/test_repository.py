@@ -1,6 +1,6 @@
 """Tests for the Repository implementation."""
 import pytest
-from src.data.specification import Specification
+from openbiocure_corelib.data.specification import Specification
 from tests.mocks.mock_implementations import TestEntity, MockRepository
 
 class TestEntityByNameSpecification(Specification[TestEntity]):

@@ -45,16 +45,16 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .nox/
-src/.coverage
-src/.coverage.*
-src/.cache
-src/nosetests.xml
-src/coverage.xml
-src/*.cover
-src/*.py,cover
-src/.hypothesis/
-src/.pytest_cache/
-src/cover/
+openbiocure_corelib/.coverage
+openbiocure_corelib/.coverage.*
+openbiocure_corelib/.cache
+openbiocure_corelib/nosetests.xml
+openbiocure_corelib/coverage.xml
+openbiocure_corelib/*.cover
+openbiocure_corelib/*.py,cover
+openbiocure_corelib/.hypothesis/
+openbiocure_corelib/.pytest_cache/
+openbiocure_corelib/cover/
 
 # Translations
 *.mo

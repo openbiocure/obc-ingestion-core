@@ -1,9 +1,9 @@
 """Integration tests for Engine with actual components."""
 import pytest
-from src.core.engine import Engine
-from src.core.interfaces import IEngine
-from src.data.db_context import IDbContext, DbContext
-from src.config.yaml_config import YamlConfig
+from openbiocure_corelib.core.engine import Engine
+from openbiocure_corelib.core.interfaces import IEngine
+from openbiocure_corelib.data.db_context import IDbContext, DbContext
+from openbiocure_corelib.config.yaml_config import YamlConfig
 from tests.mocks.mock_implementations import TestEntity, MockRepository
 
 def test_engine_component_resolution(initialized_engine):

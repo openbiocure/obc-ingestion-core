@@ -59,7 +59,7 @@ make test
 pytest tests/unit/test_engine.py
 
 # Run tests with coverage
-pytest tests/ --cov=src --cov-report=term-missing
+pytest tests/ --cov=openbiocure_corelib --cov-report=term-missing
 ```
 
 ### Building Packages
@@ -87,7 +87,7 @@ make clean
 ## 📁 Library Structure
 
 ```
-src/
+openbiocure_corelib/
 ├── config/                   # Configuration management
 │   ├── settings.py           # Settings management
 │   ├── environment.py        # Environment variables

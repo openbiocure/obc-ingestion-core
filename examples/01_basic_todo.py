@@ -8,44 +8,32 @@ import uuid
 from typing import Optional, List, Protocol
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src import engine
-from src.data.entity import BaseEntity
-from src.data.repository import IRepository
-from src.data.specification import Specification
-
-# Define a Todo entity
-class Todo(BaseEntity):
-    """Todo entity for task management."""
-    __tablename__ = "todos"
-    
-    title: Mapped[str] = mapped_column(nullable=False)
-    description: Mapped[Optional[str]] = mapped_column(nullable=True)
-    completed: Mapped[bool] = mapped_column(default=False)
-
-# Define a Todo repository interface
-class ITodoRepository(IRepository[Todo], Protocol):
-    async def find_completed(self) -> List[Todo]: ...
-    async def find_by_title(self, title: str) -> List[Todo]: ...
-
-# Define specifications
-class CompletedTodoSpecification(Specification[Todo]):
-    def to_expression(self):
-        return Todo.completed == True
-
-class TitleContainsSpecification(Specification[Todo]):
-    def __init__(self, text: str):
-        self.text = text
-    
-    def to_expression(self):
-        return Todo.title.contains(self.text)
+from examples.domain.todo_entity import Todo
+from examples.repository.todo_repository import ITodoRepository, CompletedTodoSpecification, TitleContainsSpecification
+from openbiocure_corelib import engine
 
 async def main():
+    
+    import logging
+
+    # Configure the root logger
+    logging.basicConfig(
+        level=logging.DEBUG,  # Set to DEBUG to see all messages
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.StreamHandler()  # Output to console
+        ]
+    )
+
+    # Get the engine logger specifically
+    logger = logging.getLogger('openbiocure_corelib.core.engine')
+    
     # Initialize and start the engine 
     engine.initialize()
-    engine.start()
+    await engine.start()
     
     # Resolve the todo repository
-    todo_repository = engine.resolve(ITodoRepository)
+    todo_repository =  engine.resolve(ITodoRepository)
     
     # Create a Todo entity
     todo = Todo(
@@ -73,6 +61,11 @@ async def main():
     print(f"Updated Todo: {updated_todo.title} (Completed: {updated_todo.completed})")
     
     # Find completed todos using specification
+    # The line `completed_todos = await todo_repository.find(CompletedTodoSpecification())` is calling
+    # the `find` method on the `todo_repository` object with a `CompletedTodoSpecification` as an
+    # argument. This is likely a way to retrieve a list of todos that are marked as completed based on
+    # the criteria defined in the `CompletedTodoSpecification` class. The `find` method in the
+    # repository is expected to return a list of todos that match the specified criteria.
     completed_todos = await todo_repository.find(CompletedTodoSpecification())
     print(f"Found {len(completed_todos)} completed todos")
     

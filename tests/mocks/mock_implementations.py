@@ -2,9 +2,9 @@
 from datetime import datetime, UTC
 from typing import Dict, Any, List, Optional, Type, TypeVar, Generic
 
-from src.core.startup_task import StartupTask
-from src.data.entity import BaseEntity
-from src.data.specification import ISpecification
+from openbiocure_corelib.core.startup_task import StartupTask
+from openbiocure_corelib.data.entity import BaseEntity
+from openbiocure_corelib.data.specification import ISpecification
 from sqlalchemy.orm import Mapped, mapped_column
 
 T = TypeVar('T', bound=BaseEntity)

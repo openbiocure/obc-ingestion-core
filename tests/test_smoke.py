@@ -1,10 +1,10 @@
 """Smoke tests for HerpAI-Lib."""
 import pytest
-from src import engine
-from src.core.engine import Engine
-from src.core.startup_task import StartupTask
-from src.core.startup_task_executor import StartupTaskExecutor
-from src.data.entity import BaseEntity
+from openbiocure_corelib import engine
+from openbiocure_corelib.core.engine import Engine
+from openbiocure_corelib.core.startup_task import StartupTask
+from openbiocure_corelib.core.startup_task_executor import StartupTaskExecutor
+from openbiocure_corelib.data.entity import BaseEntity
 
 def test_import_core_modules():
     """Test that core modules can be imported."""
