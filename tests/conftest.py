@@ -21,20 +21,34 @@ from tests.mocks.mock_implementations import TestEntity, MockRepository
 # We'll use pytest-asyncio's built-in event_loop fixture instead of defining our own
 # This avoids the deprecation warning
 
+# Check if we're running in CI
+def is_ci_environment():
+    """Check if we're running in a CI environment."""
+    return os.environ.get('CI') is not None or os.environ.get('GITHUB_ACTIONS') is not None
+
 @pytest.fixture(scope="session")
 def test_db_dir():
     """Create a temporary directory for test database files."""
-    with tempfile.TemporaryDirectory() as temp_dir:
-        db_dir = Path(temp_dir) / "db"
-        db_dir.mkdir(exist_ok=True)
-        yield str(db_dir)
+    if is_ci_environment():
+        # In CI, we'll use a dummy directory since we'll use in-memory databases
+        yield "/tmp/test_db"
+    else:
+        # In local development, use a real temporary directory
+        with tempfile.TemporaryDirectory() as temp_dir:
+            db_dir = Path(temp_dir) / "db"
+            db_dir.mkdir(exist_ok=True)
+            yield str(db_dir)
 
 # Test configuration fixture
 @pytest.fixture(scope="session")
 def test_config_file(test_db_dir):
     """Create a temporary test configuration file."""
-    # Create database path in the temporary directory
-    db_path = os.path.join(test_db_dir, "test.db")
+    # In CI, use in-memory database
+    if is_ci_environment():
+        db_path = ":memory:"
+    else:
+        # In local development, use a file-based database
+        db_path = os.path.join(test_db_dir, "test.db")
     
     test_config = {
         "app": {
@@ -55,7 +69,7 @@ def test_config_file(test_db_dir):
             "dialect": "sqlite",
             "driver": "aiosqlite",
             "database": db_path,
-            "is_memory_db": False
+            "is_memory_db": is_ci_environment()
         },
         "startup_tasks": {
             "DatabaseSchemaStartupTask": {

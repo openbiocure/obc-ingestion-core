@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for direct database connection string configuration
 - Proper cleanup in `initialized_engine` fixture
 - Comprehensive test cases for error handling and edge cases in Repository
+- CI environment detection to use in-memory databases in CI
 
 ### Changed
 - Updated test configuration to use temporary database path
@@ -19,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modified `Engine.current()` test to properly await engine start
 - Updated `Repository.update` method to handle both string IDs and entity objects
 - Enhanced validation in TestEntity to properly raise SQLAlchemyError for null name
+- Updated Engine.stop() method to properly clear ServiceCollection without using non-existent clear() method
+- Modified test configuration to use in-memory databases in CI environments
 
 ### Fixed
 - Database path issues in CI environment
@@ -26,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Immutable fields handling in Repository updates
 - Test startup tasks to utilize async execute methods
 - RuntimeError: 'Engine not started' by ensuring proper engine initialization
+- AttributeError in Engine.stop() method when clearing ServiceCollection
+- SQLite database access errors in CI by using in-memory databases
 
 ### Improved
 - Test coverage for repository operations

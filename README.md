@@ -4,6 +4,10 @@
 
 **HerpAI-Lib** is the foundational core library for the [HerpAI](https://github.com/openbiocure/HerpAI) platform. It provides shared infrastructure components, configuration management, logging utilities, database session handling, and the repository pattern used across HerpAI agents and services.
 
+## 📋 Documentation
+
+- [CHANGELOG](CHANGELOG.md) - See what's new and what's changed
+
 ## 💬 Join the Community
 
 Come chat with us on Discord: [HerpAI Discord Server](https://discord.gg/72dWs7J9)
