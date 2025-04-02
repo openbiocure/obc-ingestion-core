@@ -26,10 +26,21 @@ def event_loop():
     yield loop
     loop.close()
 
+@pytest.fixture(scope="session")
+def test_db_dir():
+    """Create a temporary directory for test database files."""
+    with tempfile.TemporaryDirectory() as temp_dir:
+        db_dir = Path(temp_dir) / "db"
+        db_dir.mkdir(exist_ok=True)
+        yield str(db_dir)
+
 # Test configuration fixture
 @pytest.fixture(scope="session")
-def test_config_file():
+def test_config_file(test_db_dir):
     """Create a temporary test configuration file."""
+    # Create database path in the temporary directory
+    db_path = os.path.join(test_db_dir, "test.db")
+    
     test_config = {
         "app": {
             "default_model_provider": "test-provider",
@@ -46,11 +57,7 @@ def test_config_file():
             }
         },
         "database": {
-            "host": "localhost",
-            "port": 5432,
-            "database": "test_db",
-            "username": "test_user",
-            "password": "test_password",
+            "connection_string": f"sqlite+aiosqlite:///{db_path}",
             "dialect": "sqlite",
             "driver": "aiosqlite"
         },
@@ -97,10 +104,13 @@ async def in_memory_db():
 
 # Initialized engine fixture
 @pytest.fixture(scope="function")
-async def initialized_engine():
+async def initialized_engine(test_config_file):
     """Initialize and start the engine with test configuration."""
     # Reset engine state
     Engine._instance = None
+    
+    # Set config file path
+    os.environ["CONFIG_FILE"] = test_config_file
     
     # Get fresh engine
     test_engine = Engine.initialize()
@@ -114,5 +124,8 @@ async def initialized_engine():
     yield test_engine
     
     # Clean up any resources
+    await test_engine.stop()
     test_engine._started = False
     Engine._instance = None
+    if "CONFIG_FILE" in os.environ:
+        del os.environ["CONFIG_FILE"]
