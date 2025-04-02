@@ -1,11 +1,12 @@
 """Mock implementations for testing HerpAI-Lib."""
 from datetime import datetime, UTC
-from typing import Dict, Any, List, Optional, Type, TypeVar, Generic
+from typing import Dict, Any, List, Optional, Type, TypeVar, Generic, Union
 
 from openbiocure_corelib.core.startup_task import StartupTask
 from openbiocure_corelib.data.entity import BaseEntity
 from openbiocure_corelib.data.specification import ISpecification
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.exc import SQLAlchemyError
 
 T = TypeVar('T', bound=BaseEntity)
 
@@ -22,6 +23,9 @@ class TestEntity(BaseEntity):
         # Ensure is_active has a default value
         if 'is_active' not in kwargs:
             kwargs['is_active'] = True
+        # Validate required fields
+        if 'name' in kwargs and kwargs['name'] is None:
+            raise SQLAlchemyError("name cannot be None")
         super().__init__(**kwargs)
 
 # Mock startup task for testing
@@ -43,36 +47,58 @@ class MockRepository(Generic[T]):
         self._entities: Dict[str, T] = {}
         self._next_id = 1
     
-    async def create(self, entity: T) -> T:
+    async def create(self, entity=None, **kwargs) -> T:
         """Create an entity in the mock repository."""
-        if not hasattr(entity, 'id') or getattr(entity, 'id') is None:
-            setattr(entity, 'id', f"{self._next_id}")
+        # If an entity is provided, use it
+        if entity is not None:
+            if not isinstance(entity, self._entity_type):
+                raise SQLAlchemyError("Invalid entity type")
+            new_entity = entity
+        else:
+            # Create new entity from kwargs
+            new_entity = self._entity_type(**kwargs)
+        
+        # Set ID if not present
+        if not hasattr(new_entity, 'id') or getattr(new_entity, 'id') is None:
+            setattr(new_entity, 'id', f"{self._next_id}")
             self._next_id += 1
         
-        entity_id = getattr(entity, 'id')
+        entity_id = getattr(new_entity, 'id')
         
         # Set generated values if not present
-        if not hasattr(entity, 'created_at') or getattr(entity, 'created_at') is None:
-            setattr(entity, 'created_at', datetime.now(UTC))
+        if not hasattr(new_entity, 'created_at') or getattr(new_entity, 'created_at') is None:
+            setattr(new_entity, 'created_at', datetime.now(UTC))
         
-        if not hasattr(entity, 'updated_at') or getattr(entity, 'updated_at') is None:
-            setattr(entity, 'updated_at', datetime.now(UTC))
+        if not hasattr(new_entity, 'updated_at') or getattr(new_entity, 'updated_at') is None:
+            setattr(new_entity, 'updated_at', datetime.now(UTC))
         
-        self._entities[entity_id] = entity
-        return entity
+        self._entities[entity_id] = new_entity
+        return new_entity
     
     async def get(self, id: str) -> Optional[T]:
         """Get an entity by ID."""
         return self._entities.get(id)
     
-    async def update(self, entity: T) -> Optional[T]:
+    async def update(self, id_or_entity: Union[str, T], **kwargs) -> Optional[T]:
         """Update an entity."""
-        if not hasattr(entity, 'id'):
-            return None
-        
-        entity_id = getattr(entity, 'id')
-        if entity_id not in self._entities:
-            return None
+        # Handle both cases: when an entity object is passed or when an id is passed
+        if isinstance(id_or_entity, str):
+            entity_id = id_or_entity
+            if entity_id not in self._entities:
+                return None
+            entity = self._entities[entity_id]
+            # Update entity with kwargs, excluding immutable fields
+            for key, value in kwargs.items():
+                if key not in ['id', 'created_at'] and not key.startswith('_'):
+                    setattr(entity, key, value)
+        else:
+            # An entity object was passed
+            entity = id_or_entity
+            if not hasattr(entity, 'id'):
+                return None
+            entity_id = getattr(entity, 'id')
+            if entity_id not in self._entities:
+                return None
         
         # Update timestamps
         setattr(entity, 'updated_at', datetime.now(UTC))
