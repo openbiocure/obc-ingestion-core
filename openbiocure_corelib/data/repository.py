@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic, Protocol, List, Optional, Type, Dict, Any
+from typing import TypeVar, Generic, Protocol, List, Optional, Type, Dict, Any, Union
 import uuid
 import logging
 from datetime import datetime, UTC
@@ -6,6 +6,7 @@ from sqlalchemy import select, update, delete, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from .specification import ISpecification
 from .entity import BaseEntity
+from abc import ABC, abstractmethod
 
 # Create a logger for the repository module
 logger = logging.getLogger(__name__)
@@ -23,6 +24,7 @@ class IRepository(Generic[T], Protocol):
     Type Parameters:
         T: The entity type, must be a subclass of BaseEntity
     """
+    @abstractmethod
     async def create(self, entity=None, **kwargs) -> T:
         """
         Create a new entity instance.
@@ -36,41 +38,19 @@ class IRepository(Generic[T], Protocol):
         """
         ...
         
+    @abstractmethod
     async def get(self, id: str) -> Optional[T]:
-        """
-        Retrieve an entity by its ID.
-        
-        Args:
-            id: The unique identifier of the entity
-            
-        Returns:
-            The entity if found, None otherwise
-        """
+        """Get an entity by its ID"""
         ...
         
-    async def update(self, id: str, **kwargs) -> Optional[T]:
-        """
-        Update an entity by its ID.
-        
-        Args:
-            id: The unique identifier of the entity
-            **kwargs: The attributes to update
-            
-        Returns:
-            The updated entity if found, None otherwise
-        """
+    @abstractmethod
+    async def update(self, id_or_entity: Union[str, T], **kwargs) -> Optional[T]:
+        """Update an entity by its ID or using an entity object"""
         ...
         
+    @abstractmethod
     async def delete(self, id: str) -> bool:
-        """
-        Delete an entity by its ID.
-        
-        Args:
-            id: The unique identifier of the entity
-            
-        Returns:
-            True if the entity was deleted, False otherwise
-        """
+        """Delete an entity by its ID"""
         ...
         
     async def find(self, spec: ISpecification[T]) -> List[T]:
@@ -172,44 +152,58 @@ class Repository(Generic[T], IRepository[T]):
             logger.error(f"Error getting {self._entity_type.__name__} with ID {id}: {str(e)}")
             raise
     
-    async def update(self, id: str, **kwargs) -> Optional[T]:
+    async def update(self, id_or_entity: Union[str, T], **kwargs) -> Optional[T]:
         """
         Update an entity by its ID.
         
         Args:
-            id: The unique identifier of the entity
-            **kwargs: The attributes to update
+            id_or_entity: Either the unique identifier of the entity or the entity object itself
+            **kwargs: The attributes to update (if id is provided)
             
         Returns:
             The updated entity if found, None otherwise
         """
-        logger.debug(f"Updating {self._entity_type.__name__} with ID: {id}")
+        # Handle both cases: when an entity object is passed or when an id is passed
+        if isinstance(id_or_entity, str):
+            entity_id = id_or_entity
+            update_values = kwargs
+        else:
+            # An entity object was passed
+            entity = id_or_entity
+            entity_id = entity.id
+            # Convert entity to a dictionary of values, excluding None values
+            update_values = {
+                k: v for k, v in entity.__dict__.items() 
+                if not k.startswith('_') and v is not None
+            }
+            
+        logger.debug(f"Updating {self._entity_type.__name__} with ID: {entity_id}")
         
         # Remove immutable fields
-        kwargs.pop('id', None)
-        kwargs.pop('created_at', None)
+        update_values.pop('id', None)
+        update_values.pop('created_at', None)
         
         # Set updated_at
-        kwargs['updated_at'] = datetime.now(UTC)
+        update_values['updated_at'] = datetime.now(UTC)
         
         try:
             stmt = (
                 update(self._entity_type)
-                .where(self._entity_type.id == id)
-                .values(**kwargs)
+                .where(self._entity_type.id == entity_id)
+                .values(**update_values)
                 .returning(self._entity_type)
             )
             result = await self._session.execute(stmt)
             await self._session.commit()
             entity = result.scalar_one_or_none()
             if entity:
-                logger.info(f"Updated {self._entity_type.__name__} with ID: {id}")
+                logger.info(f"Updated {self._entity_type.__name__} with ID: {entity_id}")
             else:
-                logger.warning(f"No {self._entity_type.__name__} found with ID: {id} for update")
+                logger.warning(f"No {self._entity_type.__name__} found with ID: {entity_id} for update")
             return entity
         except Exception as e:
             await self._session.rollback()
-            logger.error(f"Error updating {self._entity_type.__name__} with ID {id}: {str(e)}")
+            logger.error(f"Error updating {self._entity_type.__name__} with ID {entity_id}: {str(e)}")
             raise
     
     async def delete(self, id: str) -> bool:

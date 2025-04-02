@@ -145,10 +145,10 @@ class AppConfig:
 
             if not isinstance(raw_cfg, dict):
                 raise ConfigError("Invalid YAML configuration format")
-
             app_cfg = raw_cfg.get('app', {})
             if not app_cfg:
-                raise ConfigError("Missing 'app' section in configuration")
+                logger.warning("Missing 'app' section in configuration, defaulting to empty dictionary")
+                app_cfg = {}
 
             default_provider = app_cfg.get('default_model_provider', 'claude')
 
