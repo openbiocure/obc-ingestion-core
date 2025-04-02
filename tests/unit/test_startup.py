@@ -4,20 +4,21 @@ from openbiocure_corelib.core.startup_task import StartupTask
 from openbiocure_corelib.core.startup_task_executor import StartupTaskExecutor
 from tests.mocks.mock_implementations import MockStartupTask
 
-def test_startup_task_ordering():
+@pytest.mark.asyncio
+async def test_startup_task_ordering():
     """Test that startup tasks are executed in the correct order."""
     # Create tasks with different orders
     class Task1(StartupTask):
         order = 10
         executed = False
-        def execute(self):
+        async def execute(self):
             Task1.executed = True
             assert not Task2.executed  # Task1 should execute before Task2
     
     class Task2(StartupTask):
         order = 20
         executed = False
-        def execute(self):
+        async def execute(self):
             Task2.executed = True
             assert Task1.executed  # Task1 should have executed already
     
@@ -31,27 +32,28 @@ def test_startup_task_ordering():
     executor.add_task(Task1())
     
     # Execute tasks
-    executor.execute_all()
+    await executor.execute_all_async()
     
     # Verify both executed
     assert Task1.executed
     assert Task2.executed
 
-def test_startup_task_enabled():
+@pytest.mark.asyncio
+async def test_startup_task_enabled():
     """Test that disabled startup tasks are not executed."""
     # Create enabled and disabled tasks
     class EnabledTask(StartupTask):
         order = 10
         enabled = True
         executed = False
-        def execute(self):
+        async def execute(self):
             EnabledTask.executed = True
     
     class DisabledTask(StartupTask):
         order = 20
         enabled = False
         executed = False
-        def execute(self):
+        async def execute(self):
             DisabledTask.executed = True
     
     # Reset execution state
@@ -64,19 +66,20 @@ def test_startup_task_enabled():
     executor.add_task(DisabledTask())
     
     # Execute tasks
-    executor.execute_all()
+    await executor.execute_all_async()
     
     # Verify only enabled task executed
     assert EnabledTask.executed
     assert not DisabledTask.executed
 
-def test_startup_task_configuration():
+@pytest.mark.asyncio
+async def test_startup_task_configuration():
     """Test that startup tasks can be configured."""
     # Create configurable task
     class ConfigurableTask(StartupTask):
         executed_with = None
         
-        def execute(self):
+        async def execute(self):
             ConfigurableTask.executed_with = self._config.get('test_value')
     
     # Reset execution state
@@ -91,7 +94,7 @@ def test_startup_task_configuration():
     task._config = {'test_value': 'configured_value'}
     
     # Execute task
-    executor.execute_all()
+    await executor.execute_all_async()
     
     # Verify configuration was used
     assert ConfigurableTask.executed_with == 'configured_value'

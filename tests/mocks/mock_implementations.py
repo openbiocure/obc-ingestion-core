@@ -30,7 +30,7 @@ class MockStartupTask(StartupTask):
     order = 999
     executed = False
     
-    def execute(self) -> None:
+    async def execute(self) -> None:
         """Execute the mock task."""
         MockStartupTask.executed = True
 

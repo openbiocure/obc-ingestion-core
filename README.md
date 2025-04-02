@@ -6,7 +6,7 @@
 
 ## 💬 Join the Community
 
-Come chat with us on Discord: [HerpAI Discord Server](https://discord.com/channels/1354737744638771220/1354737744638771223)
+Come chat with us on Discord: [HerpAI Discord Server](https://discord.gg/72dWs7J9)
 
 ## 📦 Features
 

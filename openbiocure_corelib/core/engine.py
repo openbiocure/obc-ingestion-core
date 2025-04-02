@@ -140,7 +140,7 @@ class Engine(IEngine):
         if not session:
             # Try getting it from DbContext
             try:
-                from openbiocure_corelib.data.db_context import IDbContext
+                from ..data.db_context import IDbContext
                 db_context = self._services.get_service(IDbContext)
                 if db_context:
                     session = db_context.session
@@ -290,7 +290,7 @@ class Engine(IEngine):
             
             # Setup database using AppConfig
             try:
-                from openbiocure_corelib.data.db_context import IDbContext, DbContext
+                from ..data.db_context import IDbContext, DbContext
                 from sqlalchemy.ext.asyncio import AsyncSession
                 
                 # Check if we have a database config

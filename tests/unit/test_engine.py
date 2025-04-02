@@ -17,10 +17,27 @@ def test_engine_singleton():
     # For the next test
     Engine._instance = None
 
-def test_engine_property():
+@pytest.mark.asyncio
+async def test_engine_property():
     """Test that the current property returns the engine instance."""
     test_engine = Engine.initialize()
-    assert test_engine.current is test_engine
+    await test_engine.start()
+    assert Engine.current() is test_engine
+    
+    # For the next test
+    Engine._instance = None
+
+@pytest.mark.asyncio
+async def test_engine_start():
+    """Test that the engine can be started."""
+    # Create a test engine with no auto-discovery
+    test_engine = Engine.initialize()
+    
+    # Start with no failures
+    await test_engine.start()
+    
+    # Verify started
+    assert test_engine._started is True
     
     # For the next test
     Engine._instance = None

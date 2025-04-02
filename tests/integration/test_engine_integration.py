@@ -6,7 +6,8 @@ from openbiocure_corelib.data.db_context import IDbContext, DbContext
 from openbiocure_corelib.config.yaml_config import YamlConfig
 from tests.mocks.mock_implementations import TestEntity, MockRepository
 
-def test_engine_component_resolution(initialized_engine):
+@pytest.mark.asyncio
+async def test_engine_component_resolution(initialized_engine):
     """Test resolving various components from the engine."""
     # Ensure we can resolve core components
     resolved_engine = initialized_engine.resolve(IEngine)

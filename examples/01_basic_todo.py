@@ -60,12 +60,6 @@ async def main():
     updated_todo = await todo_repository.update(created_todo)
     print(f"Updated Todo: {updated_todo.title} (Completed: {updated_todo.completed})")
     
-    # Find completed todos using specification
-    # The line `completed_todos = await todo_repository.find(CompletedTodoSpecification())` is calling
-    # the `find` method on the `todo_repository` object with a `CompletedTodoSpecification` as an
-    # argument. This is likely a way to retrieve a list of todos that are marked as completed based on
-    # the criteria defined in the `CompletedTodoSpecification` class. The `find` method in the
-    # repository is expected to return a list of todos that match the specified criteria.
     completed_todos = await todo_repository.find(CompletedTodoSpecification())
     print(f"Found {len(completed_todos)} completed todos")
     

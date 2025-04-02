@@ -97,7 +97,7 @@ async def in_memory_db():
 
 # Initialized engine fixture
 @pytest.fixture(scope="function")
-def initialized_engine():
+async def initialized_engine():
     """Initialize and start the engine with test configuration."""
     # Reset engine state
     Engine._instance = None
@@ -105,10 +105,10 @@ def initialized_engine():
     # Get fresh engine
     test_engine = Engine.initialize()
     
-    # Start engine (startup tasks will be auto-discovered)
-    test_engine._started = True  # Mark as started without running tasks for testing
+    # Start engine asynchronously
+    await test_engine.start()
     
-    # Pre-register IEngine
+    # Pre-register IEngine (should already be registered during start)
     test_engine.register(IEngine, test_engine)
     
     yield test_engine
