@@ -43,9 +43,9 @@ def test_db_dir():
 @pytest.fixture(scope="session")
 def test_config_file(test_db_dir):
     """Create a temporary test configuration file."""
-    # In CI, use in-memory database
+    # In CI, use in-memory database with the correct URI format
     if is_ci_environment():
-        db_path = ":memory:"
+        db_path = "sqlite+aiosqlite:///:memory:"
     else:
         # In local development, use a file-based database
         db_path = os.path.join(test_db_dir, "test.db")
@@ -66,9 +66,10 @@ def test_config_file(test_db_dir):
             }
         },
         "database": {
+            "connection_string": db_path if is_ci_environment() else None,
             "dialect": "sqlite",
             "driver": "aiosqlite",
-            "database": db_path,
+            "database": None if is_ci_environment() else db_path,
             "is_memory_db": is_ci_environment()
         },
         "startup_tasks": {
