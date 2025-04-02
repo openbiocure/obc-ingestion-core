@@ -1,7 +1,0 @@
-Fix Repository update method to handle entity objects correctly
-
-- Modified Repository.update method to accept either a string ID or entity object
-- Added type hints using Union[str, T] to support both parameter types
-- Fixed SQL error when passing Todo object directly to update method
-- Updated IRepository interface to match new implementation
-- Added proper abstractmethod decorators to interface methods 
