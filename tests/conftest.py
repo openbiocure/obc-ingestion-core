@@ -44,26 +44,15 @@ def test_db_dir():
 def test_config_file(test_db_dir):
     """Create a temporary test configuration file."""
     # Configure database settings based on environment
-    if is_ci_environment():
-        # In CI, use in-memory SQLite database
-        database_config = {
-            "dialect": "sqlite",
-            "driver": "aiosqlite",
-            "is_memory_db": True,
-            "database": None,  # Not needed for in-memory database
-            "connection_string": "sqlite+aiosqlite:///:memory:"
-        }
-    else:
-        # In local development, use file-based database
-        db_path = os.path.join(test_db_dir, "test.db")
-        database_config = {
-            "dialect": "sqlite",
-            "driver": "aiosqlite",
-            "is_memory_db": False,
-            "database": db_path,
-            "connection_string": None
-        }
-    
+    # In CI, use in-memory SQLite database
+    database_config = {
+        "dialect": "sqlite",
+        "driver": "aiosqlite",
+        "is_memory_db": True,
+        "database": None,  # Not needed for in-memory database
+        "connection_string": "sqlite+aiosqlite:///:memory:"
+    }
+
     test_config = {
         "app": {
             "default_model_provider": "test-provider",
