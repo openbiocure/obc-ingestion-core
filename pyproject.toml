@@ -27,6 +27,7 @@ dev = [
     "black",
     "isort",
     "mypy",
+    "flake8>=7.0.0",
     "pre-commit",
 ]
 
@@ -48,3 +49,15 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = "E203"
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    "*.egg-info",
+    "venv",
+]

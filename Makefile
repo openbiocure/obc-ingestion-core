@@ -36,7 +36,7 @@ RED := \033[0;31m
 YELLOW := \033[0;33m
 NC := \033[0m # No Color
 
-.PHONY: all clean test lint format help venv install dev-install build publish check init
+.PHONY: all clean test lint format help venv install dev-install build publish check init ci ci-test
 
 # Default target
 all: help
@@ -74,6 +74,10 @@ test: check-venv ## Run tests with coverage
 	@echo "$(BLUE)Running tests...$(NC)"
 	$(VENV_RUN) pytest $(TESTS_DIR) -v $(COVERAGE_OPTIONS)
 
+ci-test: check-venv ## Run tests in CI mode
+	@echo "$(BLUE)Running tests in CI mode...$(NC)"
+	CI=true $(VENV_RUN) pytest $(TESTS_DIR) -v $(COVERAGE_OPTIONS)
+
 lint: check-venv ## Run code linters (flake8, mypy)
 	@echo "$(BLUE)Running linters...$(NC)"
 	$(VENV_RUN) flake8 $(openbiocure_corelib_DIR) $(TESTS_DIR)
@@ -88,6 +92,10 @@ format: check-venv ## Format code with black and isort
 
 check: lint test ## Run all quality checks (linting and tests)
 	@echo "$(GREEN)All checks passed!$(NC)"
+
+##@ CI Simulation
+ci: clean venv dev-install ci-test lint ## Simulate CI environment locally
+	@echo "$(GREEN)CI simulation completed!$(NC)"
 
 ##@ Building and Publishing
 build: check-venv ## Build package distributions

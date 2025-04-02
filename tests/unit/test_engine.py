@@ -18,18 +18,20 @@ def test_engine_singleton():
     Engine._instance = None
 
 @pytest.mark.asyncio
-async def test_engine_property():
+async def test_engine_property(initialized_engine):
     """Test that the current property returns the engine instance."""
-    test_engine = Engine.initialize()
-    await test_engine.start()
-    assert Engine.current() is test_engine
-    
-    # For the next test
-    Engine._instance = None
+    assert Engine.current() is initialized_engine
 
 @pytest.mark.asyncio
-async def test_engine_start():
+async def test_engine_start(test_config_file):
     """Test that the engine can be started."""
+    # Reset engine state
+    Engine._instance = None
+    
+    # Set config file path
+    import os
+    os.environ["CONFIG_FILE"] = test_config_file
+    
     # Create a test engine with no auto-discovery
     test_engine = Engine.initialize()
     
@@ -39,8 +41,11 @@ async def test_engine_start():
     # Verify started
     assert test_engine._started is True
     
-    # For the next test
+    # Clean up
+    await test_engine.stop()
     Engine._instance = None
+    if "CONFIG_FILE" in os.environ:
+        del os.environ["CONFIG_FILE"]
 
 def test_engine_register_resolve():
     """Test registering and resolving services."""

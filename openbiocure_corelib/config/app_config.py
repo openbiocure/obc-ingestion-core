@@ -20,14 +20,18 @@ class DatabaseConfig:
     driver: Optional[str] = None
     host: Optional[str] = None
     port: Optional[int] = None
-    database: str = "herpai.db"
+    database: Optional[str] = "herpai.db"
     username: Optional[str] = None
     password: Optional[str] = None
     is_memory_db: bool = False
+    _connection_string: Optional[str] = None
 
     @property
     def connection_string(self) -> str:
         """Generate SQLAlchemy connection string"""
+        if self._connection_string:
+            return self._connection_string
+            
         if self.dialect == "sqlite":
             driver_part = f"+{self.driver}" if self.driver else ""
             if self.is_memory_db:
@@ -39,13 +43,22 @@ class DatabaseConfig:
     @classmethod
     def from_dict(cls, config: Dict[str, Any]) -> 'DatabaseConfig':
         """Create DatabaseConfig from dictionary"""
+        # If connection_string is provided, use it directly
+        if 'connection_string' in config:
+            return cls(
+                dialect="sqlite",
+                driver=config.get('driver', 'aiosqlite'),
+                is_memory_db=config.get('is_memory_db', True),
+                _connection_string=config['connection_string']
+            )
+            
         dialect = config.get('dialect', 'sqlite')
         
         # For SQLite, we need different validation
         if dialect == "sqlite":
             # Default to memory DB if no database path provided
             is_memory_db = config.get('is_memory_db', False)
-            database = config.get('database', 'herpai.db')
+            database = config.get('database', 'herpai.db') if not is_memory_db else None
             
             return cls(
                 dialect="sqlite",
