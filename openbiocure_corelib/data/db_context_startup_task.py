@@ -3,6 +3,7 @@ import logging
 from openbiocure_corelib.core.startup_task import StartupTask
 from openbiocure_corelib.core.engine import Engine
 from openbiocure_corelib.data.db_context import DbContext, IDbContext
+from openbiocure_corelib.config.app_config import AppConfig
 
 logger = logging.getLogger(__name__)
 
@@ -14,32 +15,12 @@ class DatabaseSchemaStartupTask(StartupTask):
     async def execute(self) -> None:
         """Execute the startup task."""
         try:
-            # Get database configuration
-            config = Engine.current().config
-            db_config = config.get("database", {})
-            
-            # Get connection string directly or build it from parameters
-            if "connection_string" in db_config:
-                connection_string = db_config["connection_string"]
-            else:
-                # Build connection string from individual parameters
-                dialect = db_config.get("dialect", "sqlite")
-                driver = db_config.get("driver", "aiosqlite")
-                host = db_config.get("host", "localhost")
-                port = db_config.get("port", "5432")
-                database = db_config.get("database", "herpai")
-                username = db_config.get("username", "")
-                password = db_config.get("password", "")
-                
-                if dialect == "sqlite":
-                    # For SQLite, create a file-based database in the db directory
-                    connection_string = f"{dialect}+{driver}:///./db/{database}.db"
-                else:
-                    # For other databases, use full connection string
-                    connection_string = f"{dialect}+{driver}://{username}:{password}@{host}:{port}/{database}"
+            # Get database configuration from AppConfig
+            app_config = AppConfig.get_instance()
+            db_config = app_config.db_config
             
             # Create database context
-            db_context = DbContext(connection_string)
+            db_context = DbContext(db_config)
             
             # Register database context
             engine = Engine.current()
@@ -52,3 +33,18 @@ class DatabaseSchemaStartupTask(StartupTask):
         except Exception as e:
             logger.error(f"Failed to create database schema: {str(e)}")
             raise
+    
+    async def cleanup(self) -> None:
+        """Clean up resources used by the startup task."""
+        try:
+            # Get database context
+            engine = Engine.current()
+            db_context = engine.resolve(IDbContext)
+            
+            # Close database context
+            if db_context:
+                await db_context.close()
+                
+            logger.info("Database context cleaned up successfully")
+        except Exception as e:
+            logger.warning(f"Error cleaning up database context: {str(e)}")

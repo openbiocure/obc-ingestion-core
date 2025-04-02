@@ -40,6 +40,15 @@ class StartupTask:
         implement it as a regular method - it will be converted to a coroutine.
         """
         pass
+    
+    async def cleanup(self) -> None:
+        """Clean up resources used by the startup task.
+        
+        This method is an async coroutine that should be awaited.
+        Subclasses should override this method to clean up any resources
+        they allocate during execution.
+        """
+        pass
 
     def __init_subclass__(cls, **kwargs):
         """

@@ -18,13 +18,8 @@ from openbiocure_corelib.data.db_context import DbContext, IDbContext
 from openbiocure_corelib.data.entity import BaseEntity
 from tests.mocks.mock_implementations import TestEntity, MockRepository
 
-# Override event loop for pytest-asyncio
-@pytest.fixture(scope="session")
-def event_loop():
-    """Create an instance of the default event loop for each test case."""
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
+# We'll use pytest-asyncio's built-in event_loop fixture instead of defining our own
+# This avoids the deprecation warning
 
 @pytest.fixture(scope="session")
 def test_db_dir():
@@ -57,12 +52,13 @@ def test_config_file(test_db_dir):
             }
         },
         "database": {
-            "connection_string": f"sqlite+aiosqlite:///{db_path}",
             "dialect": "sqlite",
-            "driver": "aiosqlite"
+            "driver": "aiosqlite",
+            "database": db_path,
+            "is_memory_db": False
         },
         "startup_tasks": {
-            "ConfigurationStartupTask": {
+            "DatabaseSchemaStartupTask": {
                 "enabled": True
             }
         }

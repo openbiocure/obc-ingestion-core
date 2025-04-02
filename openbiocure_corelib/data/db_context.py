@@ -6,6 +6,7 @@ from sqlalchemy.sql import Executable
 from sqlalchemy.engine import Result
 import asyncio
 import logging
+from openbiocure_corelib.config.app_config import DatabaseConfig
 
 logger = logging.getLogger(__name__)
 
@@ -32,9 +33,13 @@ class IDbContext(Protocol):
 class DbContext:
     """Database context implementation for SQLAlchemy async operations."""
     
-    def __init__(self, connection_string: str):
+    def __init__(self, connection_string_or_config: Union[str, DatabaseConfig]):
         """Initialize a new instance of the DbContext class."""
-        self.connection_string = connection_string
+        if isinstance(connection_string_or_config, DatabaseConfig):
+            self.connection_string = connection_string_or_config.connection_string
+        else:
+            self.connection_string = connection_string_or_config
+            
         self._engine: Optional[AsyncEngine] = None
         self._session_factory = None
         self._session: Optional[AsyncSession] = None

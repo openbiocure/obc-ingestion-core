@@ -31,6 +31,12 @@ class Engine(IEngine):
         self._modules = set()
         self._startup_task_executor = None
         self._repository_registrations = {}
+        self._config = None
+    
+    @property
+    def config(self):
+        """Get the current configuration."""
+        return self._config
     
     @classmethod
     def initialize(cls) -> 'Engine':
@@ -95,8 +101,8 @@ class Engine(IEngine):
             try:
                 from ..config.app_config import AppConfig
                 
-                config = AppConfig.get_instance()
-                self._startup_task_executor.configure_tasks(config.__dict__)
+                self._config = AppConfig.get_instance()
+                self._startup_task_executor.configure_tasks(self._config.__dict__)
             except Exception as e:
                 logger.warning(f"Failed to configure startup tasks from config: {str(e)}")
             
@@ -109,6 +115,49 @@ class Engine(IEngine):
             raise
         
         logger.info("Engine started successfully")
+    
+    async def stop(self) -> None:
+        """
+        Stop the engine and clean up resources.
+        This should be called when the engine is no longer needed.
+        """
+        if not self._started:
+            return
+        
+        logger.info("Stopping engine...")
+        
+        try:
+            # Clean up database context if it exists
+            try:
+                from ..data.db_context import IDbContext
+                db_context = self._services.get_service(IDbContext)
+                if db_context:
+                    await db_context.close()
+            except Exception as e:
+                logger.warning(f"Failed to close database context: {str(e)}")
+            
+            # Clean up startup task executor if it exists
+            if self._startup_task_executor:
+                try:
+                    await self._startup_task_executor.cleanup()
+                except Exception as e:
+                    logger.warning(f"Failed to cleanup startup task executor: {str(e)}")
+            
+            # Clear service collection by resetting its internal dictionaries
+            self._services._services = {}
+            self._services._scoped_factories = {}
+            self._services._transient_factories = {}
+            
+            # Reset engine state
+            self._started = False
+            self._modules.clear()
+            self._repository_registrations.clear()
+            self._config = None
+            
+            logger.info("Engine stopped successfully")
+        except Exception as e:
+            logger.error(f"Error stopping engine: {str(e)}")
+            raise
     
     def _complete_repository_registrations(self):
         """
@@ -293,25 +342,15 @@ class Engine(IEngine):
                 from ..data.db_context import IDbContext, DbContext
                 from sqlalchemy.ext.asyncio import AsyncSession
                 
-                # Check if we have a database config
-                if app_config.db_config:
-                    connection_string = app_config.db_config.connection_string
-                    # Add async driver for SQLite if not specified
-                    if app_config.db_config.dialect == "sqlite" and not app_config.db_config.driver:
-                        connection_string = connection_string.replace("sqlite://", "sqlite+aiosqlite://")
-                    
-                    # Create DbContext with connection string from config
-                    db_context = DbContext(connection_string)
-                else:
-                    # Create in-memory SQLite database as fallback
-                    db_context = DbContext("sqlite+aiosqlite:///:memory:")
-                    logger.warning("Using in-memory SQLite database as fallback")
+                # Get database configuration from AppConfig
+                db_config = app_config.db_config
                 
-                # Register DbContext and its session
-                self._services.add_singleton(IDbContext, lambda: db_context)
-                self._services.add_singleton(DbContext, lambda: db_context)
+                # Create database context
+                db_context = DbContext(db_config)
                 
-                # Also register AsyncSession directly if needed by repositories
+                # Register database context and session
+                self._services.add_singleton(IDbContext, db_context)
+                self._services.add_singleton(DbContext, db_context)
                 self._services.add_singleton(AsyncSession, lambda: db_context.session)
             except Exception as e:
                 logger.warning(f"DbContext not available: {str(e)}")
@@ -361,6 +400,7 @@ class Engine(IEngine):
             
             # Find all generic implementations of IRepository<T>
             repository_implementations = type_finder.find_generic_implementations(IRepository)
+            
             logger.info(f"Found {len(repository_implementations)} repository implementations")
             
             # Look for concrete entity types in modules

@@ -74,6 +74,32 @@ class StartupTaskExecutor:
         except Exception as e:
             logger.error(f"Error executing startup tasks: {str(e)}")
             raise
+    
+    async def cleanup(self) -> None:
+        """Clean up resources used by startup tasks."""
+        logger.info("Cleaning up startup tasks...")
+        
+        # Sort tasks by order (reverse) to clean up in reverse order
+        sorted_tasks = sorted(
+            [task for task in self._tasks.values() if task.enabled], 
+            key=lambda t: t.order,
+            reverse=True
+        )
+        
+        # Clean up tasks
+        for task in sorted_tasks:
+            try:
+                if hasattr(task, 'cleanup') and callable(task.cleanup):
+                    logger.info(f"Cleaning up startup task: {task.name}")
+                    await task.cleanup()
+            except Exception as e:
+                logger.warning(f"Error cleaning up startup task {task.name}: {str(e)}")
+        
+        # Clear tasks
+        self._tasks.clear()
+        self._task_config.clear()
+        
+        logger.info("Startup tasks cleaned up successfully")
 
     def discover_tasks(self) -> 'StartupTaskExecutor':
         """
