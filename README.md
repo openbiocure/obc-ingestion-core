@@ -80,36 +80,97 @@ make clean
 
 | Example | Description |
 |---------|-------------|
-| [01_basic_todo.py](examples/01_basic_todo.py) | Basic repository pattern with a Todo entity |
-| [02_yaml_config.py](examples/02_yaml_config.py) | Working with YAML configuration and dotted access |
-| [03_app_config.py](examples/03_app_config.py) | Using strongly-typed dataclass configuration |
-| [04_custom_startup.py](examples/04_custom_startup.py) | Creating custom startup tasks with ordering |
-| [05_database_operations.py](examples/05_database_operations.py) | Advanced database operations with repositories |
-| [06_autodiscovery.py](examples/06_autodiscovery.py) | Auto-discovery of startup tasks and components |
-| [07_multi_config.py](examples/07_multi_config.py) | Working with multiple configuration sources |
+| [01_basic_todo.py](examples/01_basic_todo.py) | Demonstrates basic repository pattern with a Todo entity, including CRUD operations and dependency injection |
+| [02_yaml_config.py](examples/02_yaml_config.py) | Shows how to work with YAML configuration files, including environment variables and dotted notation access |
+| [03_app_config.py](examples/03_app_config.py) | Illustrates strongly-typed configuration using dataclasses with validation and inheritance |
+| [04_custom_startup.py](examples/04_custom_startup.py) | Shows how to create and order custom startup tasks with dependencies and async support |
+| [05_database_operations.py](examples/05_database_operations.py) | Comprehensive example of database operations using repositories, specifications, and async patterns |
+| [06_autodiscovery.py](examples/06_autodiscovery.py) | Demonstrates automatic discovery and registration of components, repositories, and startup tasks |
+| [07_multi_config.py](examples/07_multi_config.py) | Shows how to work with multiple configuration sources and hierarchical configuration |
+
+### Example Domains
+The `examples/domain/` directory contains sample domain models and business logic implementations.
+
+### Repository Examples
+The `examples/repository/` directory shows advanced repository pattern implementations with:
+- Custom specifications
+- Complex queries
+- Relationship handling
+- Bulk operations
+
+### Configuration Examples
+The `examples/config/` directory demonstrates various configuration scenarios including:
+- Environment-specific configs
+- Validation rules
+- Hot reload
+- Secret management
 
 ## 📁 Library Structure
 
 ```
 openbiocure_corelib/
-├── config/                   # Configuration management
-│   ├── settings.py           # Settings management
-│   ├── environment.py        # Environment variables
-│   ├── yaml_config.py        # Basic YAML configuration
-│   └── dataclass_config.py   # Typed dataclass configuration
-│
 ├── core/                     # Core engine components
-│   ├── engine.py             # DI container and engine
-│   ├── dependency.py         # Dependency injection
-│   ├── startup.py            # Startup tasks
-│   └── exceptions.py         # Core exceptions
+│   ├── engine.py            # Main DI container and application lifecycle
+│   ├── interfaces.py        # Core interfaces
+│   ├── service_collection.py # Service registration and resolution
+│   ├── service_scope.py     # Scoped service management
+│   ├── startup_task.py      # Base startup task definition
+│   ├── startup_task_executor.py # Startup orchestration
+│   ├── type_finder.py       # Dynamic type discovery
+│   └── singleton.py         # Singleton pattern implementation
 │
-├── data/                     # Data access
-│   ├── entity.py             # Base entity
-│   ├── repository.py         # Repository pattern
-│   ├── specification.py      # Specification pattern
-│   └── db_context.py         # Database context
+├── config/                   # Configuration management
+│   ├── settings.py          # Settings management
+│   ├── environment.py       # Environment variables
+│   ├── yaml_config.py       # YAML configuration
+│   └── app_config.py        # Application configuration
+│
+├── data/                     # Data access layer
+│   ├── entity.py            # Base entity definition
+│   ├── repository.py        # Generic repository pattern
+│   ├── specification.py     # Query specifications
+│   └── db_context.py        # Database session management
+│
+├── infrastructure/          # Infrastructure components
+│   ├── logging/            # Logging infrastructure
+│   └── persistence/        # Database infrastructure
+│
+├── domain/                 # Domain models and business logic
+│
+└── utils/                  # Utility functions and helpers
 ```
+
+## 🚀 Key Features
+
+### Core Engine
+- **Dependency Injection Container**: Fully featured DI container with support for:
+  - Singleton, Scoped, and Transient lifetimes
+  - Automatic constructor injection
+  - Factory registration
+  - Generic type resolution
+
+### Startup System
+- **Ordered Initialization**: Define startup tasks with dependencies
+- **Configuration Integration**: Automatic configuration injection into startup tasks
+- **Async Support**: Full async/await support for startup tasks
+- **Auto-discovery**: Automatic discovery and registration of startup tasks
+
+### Repository Pattern
+- **Generic Repositories**: Type-safe generic repository pattern
+- **Specification Pattern**: Fluent query building with specifications
+- **Async Database Operations**: Full async support for database operations
+- **Session Management**: Automatic session lifecycle management
+
+### Configuration
+- **Hierarchical Config**: Multi-level configuration system
+- **Environment Support**: Environment variable integration
+- **Type Safety**: Strong typing with dataclass validation
+- **Hot Reload**: Configuration hot-reload support (where applicable)
+
+### Infrastructure
+- **Structured Logging**: Consistent logging across components
+- **Database Abstraction**: Clean separation of database concerns
+- **Error Handling**: Centralized error handling and logging
 
 ## 🧪 Requirements
 
