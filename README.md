@@ -45,7 +45,9 @@ cd HerpAI-Lib
 pip install -e .
 ```
 
-## ⚡ Quick Example
+## ⚡ Quick Examples
+
+### Basic Todo Repository
 
 ```python
 import asyncio
@@ -54,32 +56,64 @@ from examples.domain.todo_entity import Todo
 from examples.repository.todo_repository import ITodoRepository, CompletedTodoSpecification
 
 async def main():
-    # Initialize and start the engine
     engine.initialize()
     await engine.start()
 
-    # Resolve the todo repository
-    todo_repository = engine.resolve(ITodoRepository)
+    todo_repo = engine.resolve(ITodoRepository)
 
-    # Create a Todo entity
-    todo = Todo(
-        title="Learn OpenBioCure_CoreLib",
-        description="Implement repository pattern with dependency injection",
-        completed=False
-    )
-    created_todo = await todo_repository.create(todo)
-    print(f"Created Todo: {created_todo.title}")
+    todo = Todo(title="Learn OpenBioCure_CoreLib", description="Use DI and repository", completed=False)
+    created = await todo_repo.create(todo)
 
-    # Mark as completed
-    created_todo.completed = True
-    await todo_repository.update(created_todo)
+    created.completed = True
+    await todo_repo.update(created)
 
-    # Query completed todos
-    completed_todos = await todo_repository.find(CompletedTodoSpecification())
+    completed_todos = await todo_repo.find(CompletedTodoSpecification())
     print(f"Completed todos: {len(completed_todos)}")
 
-if __name__ == "__main__":
-    asyncio.run(main())
+asyncio.run(main())
+```
+
+### Accessing YAML Configuration
+
+```python
+from openbiocure_corelib import engine
+from openbiocure_corelib.config.yaml_config import YamlConfig
+
+engine.initialize()
+config = engine.resolve(YamlConfig)
+
+print(config.get('database.host'))
+print(config.get('app.default_model_provider'))
+```
+
+### Custom Startup Task
+
+```python
+from openbiocure_corelib.core.startup_task import StartupTask
+
+class MyStartupTask(StartupTask):
+    order = 50
+
+    async def execute(self):
+        print("Running my startup task!")
+```
+
+### Advanced Database Queries with Specifications
+
+```python
+from openbiocure_corelib.data.specification import Specification
+
+class UserByUsernameSpec(Specification):
+    def __init__(self, username):
+        self.username = username
+
+    def to_expression(self):
+        from myapp.models import User
+        return User.username == self.username
+
+# Usage:
+user_repo = engine.resolve(IUserRepository)
+user = await user_repo.find_one(UserByUsernameSpec("johndoe"))
 ```
 
 ## 📋 Examples
@@ -98,23 +132,35 @@ if __name__ == "__main__":
 
 ```
 openbiocure_corelib/
-├── config/                   # Configuration management
-│   ├── settings.py           # Settings management
-│   ├── environment.py        # Environment variables
-│   ├── yaml_config.py        # Basic YAML configuration
-│   └── dataclass_config.py   # Typed dataclass configuration
-│
-├── core/                     # Core engine components
-│   ├── engine.py             # DI container and engine
-│   ├── dependency.py         # Dependency injection
-│   ├── startup.py            # Startup tasks
-│   └── exceptions.py         # Core exceptions
-│
-├── data/                     # Data access
-│   ├── entity.py             # Base entity
-│   ├── repository.py         # Repository pattern
-│   ├── specification.py      # Specification pattern
-│   └── db_context.py         # Database context
+├── cli.py
+├── config/
+│   ├── app_config.py
+│   ├── dataclass_config.py
+│   ├── environment.py
+│   ├── settings.py
+│   └── yaml_config.py
+├── core/
+│   ├── configuration_startup_task.py
+│   ├── engine.py
+│   ├── interfaces.py
+│   ├── service_collection.py
+│   ├── service_scope.py
+│   ├── singleton.py
+│   ├── startup_task_executor.py
+│   ├── startup_task.py
+│   └── type_finder.py
+├── data/
+│   ├── db_context_startup_task.py
+│   ├── db_context.py
+│   ├── entity.py
+│   ├── repository.py
+│   └── specification.py
+├── domain/
+├── infrastructure/
+│   ├── caching/
+│   ├── events/
+│   └── logging/
+└── utils/
 ```
 
 ## 🧪 Requirements
