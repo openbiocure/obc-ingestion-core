@@ -25,6 +25,18 @@ Come chat with us on Discord: [HerpAI Discord Server](https://discord.gg/72dWs7J
 - 🚀 **Auto-discovery Startup System** - Ordered initialization with configuration
 - 🪵 **Structured Logging** - Consistent format across components
 
+## 🆕 What's New in 0.3.0
+
+- Core symbols like `IRepository`, `Repository`, `BaseEntity`, `Specification`, `YamlConfig`, `Environment`, `StartupTask`, and `AppConfig` are now exposed directly from the root package.
+- This simplifies imports. For example:
+
+```python
+from openbiocure_corelib import IRepository, Repository, BaseEntity, Specification, YamlConfig, Environment, StartupTask, AppConfig
+```
+
+- Created a dedicated release branch `release-3.1.0` containing these changes.
+- See the [Changelog](#changelog) for full details.
+
 ## 🛠️ Installation
 
 ```bash
@@ -76,8 +88,7 @@ asyncio.run(main())
 ### Accessing YAML Configuration
 
 ```python
-from openbiocure_corelib import engine
-from openbiocure_corelib.config.yaml_config import YamlConfig
+from openbiocure_corelib import engine, YamlConfig
 
 engine.initialize()
 config = engine.resolve(YamlConfig)
@@ -89,7 +100,7 @@ print(config.get('app.default_model_provider'))
 ### Custom Startup Task
 
 ```python
-from openbiocure_corelib.core.startup_task import StartupTask
+from openbiocure_corelib import StartupTask
 
 class MyStartupTask(StartupTask):
     order = 50
@@ -101,7 +112,7 @@ class MyStartupTask(StartupTask):
 ### Advanced Database Queries with Specifications
 
 ```python
-from openbiocure_corelib.data.specification import Specification
+from openbiocure_corelib import Specification
 
 class UserByUsernameSpec(Specification):
     def __init__(self, username):
