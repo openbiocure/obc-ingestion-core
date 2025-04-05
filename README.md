@@ -25,7 +25,7 @@ Come chat with us on Discord: [HerpAI Discord Server](https://discord.gg/72dWs7J
 - 🚀 **Auto-discovery Startup System** - Ordered initialization with configuration
 - 🪵 **Structured Logging** - Consistent format across components
 
-## 🆕 What's New in 0.3.0
+## 🆕 What's New in 3.1.0
 
 - Core symbols like `IRepository`, `Repository`, `BaseEntity`, `Specification`, `YamlConfig`, `Environment`, `StartupTask`, and `AppConfig` are now exposed directly from the root package.
 - This simplifies imports. For example:
