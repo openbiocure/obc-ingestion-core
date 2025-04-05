@@ -6,7 +6,7 @@ VENV_NAME := venv
 VENV_BIN := $(VENV_NAME)/bin
 VENV_ACTIVATE := $(VENV_BIN)/activate
 PYTHON_VERSION := 3.9
-PACKAGE_NAME := herpai-lib
+PACKAGE_NAME := openbiocure_corelib
 GITHUB_USERNAME := openbiocure
 GITHUB_REPO := HerpAI-Lib
 
