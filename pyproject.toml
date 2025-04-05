@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "openbiocure_corelib"
-version = "0.2.1"
+version = "0.3.0"
 description = "HerpAI Core Library, Accelerating the discovery of a functional cure for HSV-1 and HSV-2 using AI."
 readme = "README.md"
 requires-python = ">=3.9"
