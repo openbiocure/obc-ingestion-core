@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "herpai-lib"
-version = "0.1.0"
+version = "0.2.0"
 description = "HerpAI Core Library, Accelerating the discovery of a functional cure for HSV-1 and HSV-2 using AI."
 readme = "README.md"
 requires-python = ">=3.9"
