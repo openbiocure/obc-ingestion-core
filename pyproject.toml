@@ -32,8 +32,11 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["openbiocure_corelib"]
 package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["openbiocure_corelib*"]
 
 [tool.black]
 line-length = 88
