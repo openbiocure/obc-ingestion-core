@@ -132,7 +132,6 @@ user = await user_repo.find_one(UserByUsernameSpec("johndoe"))
 
 ```
 openbiocure_corelib/
-├── cli.py
 ├── config/
 │   ├── app_config.py
 │   ├── dataclass_config.py
