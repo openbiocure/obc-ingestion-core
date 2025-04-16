@@ -8,7 +8,155 @@
 
 ## 📋 Documentation
 
-- See the changelog at the bottom of this file for recent updates.
+This section provides detailed documentation on the core components and usage of `OpenBioCure_CoreLib`, informed by the library's source code.
+
+### Core Concepts Explained
+
+*   **Dependency Injection (DI) Engine (`engine: IEngine`)**:
+    *   **Source**: `openbiocure_corelib.core.engine.Engine`
+    *   **Role**: The central singleton orchestrator managing the application's lifecycle and services. Accessed via `engine.current()`.
+    *   **Lifecycle**:
+        *   `initialize()`: Sets up the engine and registers core services. Call this first.
+        *   `register_module(module_path)`: Scans a module path for discoverable components (like `StartupTask`s).
+        *   `add_startup_task(task)`: Manually adds a `StartupTask`.
+        *   `start()`: Executes registered `StartupTask`s in order.
+        *   `stop()`: Cleans up resources, potentially calling `cleanup()` on tasks.
+    *   **Service Management**:
+        *   `register(interface_type, implementation)`: Registers services (delegates to `ServiceCollection`).
+        *   `resolve(Type[T])`: Retrieves a registered service instance.
+        *   `create_scope()`: Creates an `IServiceScope` for managing scoped service lifetimes.
+*   **Service Collection (`ServiceCollection`)**:
+    *   **Source**: `openbiocure_corelib.core.service_collection.ServiceCollection`
+    *   **Role**: Internal registry used by the `Engine` to manage service definitions and lifetimes.
+    *   **Methods**: `add_singleton`, `add_scoped`, `add_transient` define how services are instantiated and cached. `get_service` retrieves definitions.
+*   **Service Scopes (`IServiceScope`)**:
+    *   **Source**: `openbiocure_corelib.core.service_scope.ServiceScope`
+    *   **Role**: Manages the lifetime of 'scoped' services. Created via `engine.create_scope()`.
+    *   **Methods**: `resolve(Type[T])` retrieves services within the scope. `dispose()` cleans up scoped instances.
+*   **Repository Pattern (`IRepository[T]`, `Repository[T]`)**:
+    *   **Source**: `openbiocure_corelib.data.repository`
+    *   **Role**: Abstracts data access logic for specific entity types (`T`). Promotes testability and separation of concerns. Requires an `AsyncSession` (usually from `DbContext`).
+    *   **Key Methods**:
+        *   `create(entity | **kwargs)`: Adds a new entity.
+        *   `get(id)`: Retrieves an entity by its primary key.
+        *   `update(id | entity, **kwargs)`: Modifies an existing entity.
+        *   `delete(id)`: Removes an entity by its primary key.
+        *   `find(spec: ISpecification[T])`: Retrieves a list of entities matching the specification criteria.
+*   **Specification Pattern (`ISpecification[T]`, `Specification[T]`)**:
+    *   **Source**: `openbiocure_corelib.data.specification`
+    *   **Role**: Encapsulates query logic in reusable objects. Used with `Repository.find()`.
+    *   **Key Methods**:
+        *   `to_expression()`: Translates the specification into a SQLAlchemy query expression (e.g., `User.name == ' Cline'`).
+        *   `is_satisfied_by(entity)`: (Less common for DB queries) Checks if an in-memory entity matches.
+    *   **Composition**: Combine specifications using `and_()` and `or_()` (or `&` and `|` operators via `AndSpecification`, `OrSpecification`).
+*   **Configuration Management**:
+    *   **Sources**: `openbiocure_corelib.config.yaml_config`, `openbiocure_corelib.config.app_config`, `openbiocure_corelib.config.dataclass_config`, `openbiocure_corelib.config.environment`
+    *   **Role**: Provides ways to load and access application settings.
+    *   **Approaches**:
+        *   `YamlConfig`: Flexible, dictionary-based access to YAML files. Use `load()` and `get('dotted.key')`. Registered as a singleton by default.
+        *   `AppConfig` / `DatabaseConfig` / `AgentConfig`: Strongly-typed dataclasses (defined in both `app_config.py` and `dataclass_config.py` - *Note: potential duplication*). Provides validation and type hints. Use `load()` and access attributes directly. Often used alongside `YamlConfig`.
+        *   `Environment`: Helper class to read OS environment variables (`get`, `get_bool`, `get_int`).
+    *   **Loading**: Typically handled by `ConfigurationStartupTask`.
+*   **Startup Tasks (`StartupTask`)**:
+    *   **Source**: `openbiocure_corelib.core.startup_task.StartupTask`
+    *   **Role**: Defines ordered, asynchronous operations to run during application initialization (`engine.start()`).
+    *   **Implementation**: Inherit `StartupTask`, override `async execute()`, set `order` (lower runs first). Can optionally implement `configure(config)` and `async cleanup()`.
+    *   **Execution**: Managed by `StartupTaskExecutor`. Tasks can be added manually (`engine.add_startup_task`) or auto-discovered.
+    *   **Built-in Tasks**: `ConfigurationStartupTask`, `DatabaseSchemaStartupTask`.
+*   **Auto-discovery (`TypeFinder`)**:
+    *   **Source**: `openbiocure_corelib.core.type_finder.TypeFinder`
+    *   **Role**: Scans specified Python modules or the entire environment to find classes implementing specific base classes or protocols (e.g., `StartupTask`, `IRepository`). Used by the `Engine` during initialization and registration phases.
+    *   **Methods**: `find_classes_of_type`, `find_generic_implementations`.
+*   **Database Context (`IDbContext`, `DbContext`)**:
+    *   **Source**: `openbiocure_corelib.data.db_context.DbContext`
+    *   **Role**: Manages the database connection (via SQLAlchemy `create_async_engine`) and provides access to `AsyncSession` instances for repository operations.
+    *   **Initialization**: Requires a connection string or `DatabaseConfig`. `initialize()` sets up the engine and optionally creates the schema (`create_schema`). `close()` disposes of the engine.
+    *   **Usage**: Typically registered as a singleton. Repositories resolve `AsyncSession` from it via `session()`. `execute()` allows running raw SQL or SQLAlchemy core statements.
+
+### Key Modules and Classes (Detailed)
+
+*   **`openbiocure_corelib.core`**: The heart of the application framework.
+    *   `Engine`: Central DI container and lifecycle manager.
+    *   `IEngine`: Protocol defining the engine's public interface.
+    *   `ServiceCollection`: Internal registry for service definitions (singleton, scoped, transient).
+    *   `IServiceScope`: Protocol for managing scoped service instances.
+    *   `ServiceScope`: Default implementation of `IServiceScope`.
+    *   `StartupTask`: Base class for defining initialization steps.
+    *   `StartupTaskExecutor`: Discovers, orders, and executes `StartupTask`s.
+    *   `TypeFinder`: Implements auto-discovery of classes based on type/protocol.
+    *   `ITypeFinder`: Protocol for type discovery.
+    *   `ConfigurationStartupTask`: Built-in task to load configuration using `YamlConfig`.
+    *   `Singleton`: (Potentially a helper or metaclass for singletons, usage context needed).
+*   **`openbiocure_corelib.config`**: Configuration loading and access.
+    *   `YamlConfig`: Loads settings from YAML files, provides dictionary-like access (`get`).
+    *   `AppConfig`, `DatabaseConfig`, `AgentConfig`: Dataclasses for strongly-typed configuration (defined in both `app_config.py` and `dataclass_config.py`). Methods like `load`, `from_dict`, `connection_string`.
+    *   `Environment`: Static methods to access OS environment variables.
+    *   `Settings`: Class for potentially managing persistent settings (e.g., saving to a file - `load`, `get`, `set`, `save`). Its exact role might need clarification from usage.
+    *   `ConfigError`: Custom exception for configuration issues.
+*   **`openbiocure_corelib.data`**: Data access layer components.
+    *   `DbContext`: Manages SQLAlchemy async engine and sessions.
+    *   `IDbContext`: Protocol defining the DbContext interface.
+    *   `BaseEntity`: Base class for SQLAlchemy declarative models.
+    *   `IRepository[T]`: Protocol defining generic repository operations (CRUD + find).
+    *   `Repository[T]`: Generic implementation of `IRepository` using `AsyncSession`.
+    *   `ISpecification[T]`: Protocol for query specifications.
+    *   `Specification[T]`: Base implementation for specifications, including composition methods (`and_`, `or_`).
+    *   `AndSpecification`, `OrSpecification`: Concrete composite specifications.
+    *   `DatabaseSchemaStartupTask`: Built-in task to initialize the database schema via `DbContext.create_schema()`.
+*   **`openbiocure_corelib.infrastructure`**: (Currently sparse) Intended for cross-cutting concerns like caching, event handling, logging wrappers.
+
+### Usage Examples
+
+Refer to the [Examples](#-examples) section and the `examples/` directory for practical demonstrations of these concepts. The examples showcase how to combine these components for common tasks.
+
+### Configuration Details
+
+*   **Primary Method**: Use a `config.yaml` file (or multiple) loaded by `ConfigurationStartupTask` into the `YamlConfig` singleton. Access via `engine.resolve(YamlConfig).get('some.key')`.
+*   **Typed Configuration**: Define dataclasses inheriting from `AppConfig` (or standalone like `DatabaseConfig`). Load them from the dictionary provided by `YamlConfig` or directly from a file using their `load` or `from_dict` methods. Access via `engine.resolve(YourAppConfig)` if registered, or manage instances manually.
+*   **Database Setup**: Configure database connection details under a `database` key in YAML (e.g., `type`, `path`, `host`, `port`, `username`, `password`) used by `DbContext` or `DatabaseConfig`. The `DbContext` can use either a direct connection string or a `DatabaseConfig` object.
+*   **Environment Overrides**: Use `Environment.getX` for settings that might change between deployment environments (e.g., API keys, debug flags).
+
+```yaml
+# Example config.yaml
+database:
+  type: sqlite # e.g., sqlite, postgresql
+  path: "db/app.db" # For sqlite
+  # host: localhost # For others
+  # port: 5432
+  # username: user
+  # password: pass
+  # database_name: myapp
+  echo: false # Log SQL statements?
+
+app:
+  name: "My CoreLib App"
+  default_model_provider: "some_provider"
+  # Other app-specific settings
+
+logging:
+  level: INFO # e.g., DEBUG, INFO, WARNING, ERROR
+
+# Optional: Configuration for specific startup tasks
+# MyCustomTask:
+#   setting1: value1
+```
+
+### Extending the Library
+
+*   **Custom Repositories**:
+    1.  Define your SQLAlchemy model inheriting `BaseEntity`.
+    2.  Define an interface inheriting `IRepository[YourEntity]`.
+    3.  Implement the interface inheriting `Repository[YourEntity]`.
+    4.  Register with the engine: `engine.register(IYourRepository, YourRepository)`. Auto-discovery might handle this if `YourRepository` is in a scanned module.
+*   **Custom Startup Tasks**:
+    1.  Create a class inheriting `StartupTask`.
+    2.  Set a unique `order` attribute (integer).
+    3.  Implement `async def execute(self) -> None:`.
+    4.  Optionally implement `configure(self, config)` and `async cleanup(self) -> None:`.
+    5.  Ensure the task is discoverable (in a scanned module) or add it manually via `engine.add_startup_task()`.
+*   **Custom Services**:
+    1.  Define your service class and optionally an interface (protocol).
+    2.  Register it using `engine.services.add_singleton(IMyService, MyService)`, `add_scoped`, or `add_transient`.
 
 ## 💬 Join the Community
 
