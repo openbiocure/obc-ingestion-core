@@ -4,6 +4,7 @@ Basic Todo Example
 This example demonstrates the core repository pattern with entity creation and injection.
 """
 import asyncio
+import logging
 import uuid
 from typing import Optional, List, Protocol
 from sqlalchemy.orm import Mapped, mapped_column
@@ -12,9 +13,7 @@ from examples.domain.todo_entity import Todo
 from examples.repository.todo_repository import ITodoRepository, CompletedTodoSpecification, TitleContainsSpecification
 from openbiocure_corelib import engine
 
-async def main():
-    
-    import logging
+async def main() -> None:
 
     # Configure the root logger
     logging.basicConfig(

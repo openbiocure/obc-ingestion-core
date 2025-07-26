@@ -78,8 +78,14 @@ ci-test: check-venv ## Run tests in CI mode
 	@echo "$(BLUE)Running tests in CI mode...$(NC)"
 	CI=true $(VENV_RUN) pytest $(TESTS_DIR) -v $(COVERAGE_OPTIONS)
 
-lint: check-venv ## Run code linters (flake8, mypy)
+lint: check-venv ## Run code linters (flake8 only)
 	@echo "$(BLUE)Running linters...$(NC)"
+	$(VENV_RUN) flake8 $(openbiocure_corelib_DIR) $(TESTS_DIR)
+	$(VENV_RUN) black --check $(openbiocure_corelib_DIR) $(TESTS_DIR)
+	$(VENV_RUN) isort --check-only $(openbiocure_corelib_DIR) $(TESTS_DIR)
+
+lint-full: check-venv ## Run all linters including mypy
+	@echo "$(BLUE)Running all linters...$(NC)"
 	$(VENV_RUN) flake8 $(openbiocure_corelib_DIR) $(TESTS_DIR)
 	$(VENV_RUN) mypy $(openbiocure_corelib_DIR) $(TESTS_DIR)
 	$(VENV_RUN) black --check $(openbiocure_corelib_DIR) $(TESTS_DIR)

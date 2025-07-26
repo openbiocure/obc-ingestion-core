@@ -1,3 +1,3 @@
-from .mock_implementations import TestEntity, MockRepository, MockStartupTask
+from .mock_implementations import MockRepository, MockStartupTask, TestEntity
 
-__all__ = ['TestEntity', 'MockRepository', 'MockStartupTask']
+__all__ = ["TestEntity", "MockRepository", "MockStartupTask"]
