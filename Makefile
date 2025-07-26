@@ -8,7 +8,7 @@ VENV_ACTIVATE := $(VENV_BIN)/activate
 PYTHON_VERSION := 3.9
 PACKAGE_NAME := openbiocure_corelib
 GITHUB_USERNAME := openbiocure
-GITHUB_REPO := HerpAI-Lib
+GITHUB_REPO := obc-ingestion-core
 
 # Test and coverage settings
 TESTS_DIR := tests
