@@ -182,4 +182,4 @@ cython_debug/
 
 .DS_Store
 *.DS_Store
-db/openbiocure-catalog
+./db

@@ -36,7 +36,7 @@ RED := \033[0;31m
 YELLOW := \033[0;33m
 NC := \033[0m # No Color
 
-.PHONY: all clean test lint format help venv install dev-install build publish check init ci ci-test
+.PHONY: all clean test lint format help venv install dev-install build publish check init ci ci-test run-examples
 
 # Default target
 all: help
@@ -78,6 +78,15 @@ ci-test: check-venv ## Run tests in CI mode
 	@echo "$(BLUE)Running tests in CI mode...$(NC)"
 	CI=true $(VENV_RUN) pytest $(TESTS_DIR) -v $(COVERAGE_OPTIONS)
 
+run-examples: check-venv ## Run all examples
+	@echo "$(BLUE)Running all examples...$(NC)"
+	@for example in examples/*.py; do \
+		echo "$(YELLOW)=== Running $$example ===$(NC)"; \
+		$(VENV_RUN) python "$$example"; \
+		echo; \
+	done
+	@echo "$(GREEN)All examples completed!$(NC)"
+
 lint: check-venv ## Run code linters (flake8 only)
 	@echo "$(BLUE)Running linters...$(NC)"
 	$(VENV_RUN) flake8 $(openbiocure_corelib_DIR) $(TESTS_DIR)
@@ -96,7 +105,7 @@ format: check-venv ## Format code with black and isort
 	$(VENV_RUN) black $(openbiocure_corelib_DIR) $(TESTS_DIR)
 	$(VENV_RUN) isort $(openbiocure_corelib_DIR) $(TESTS_DIR)
 
-check: lint test ## Run all quality checks (linting and tests)
+check: lint test run-examples ## Run all quality checks (linting, tests, and examples)
 	@echo "$(GREEN)All checks passed!$(NC)"
 
 ##@ CI Simulation
