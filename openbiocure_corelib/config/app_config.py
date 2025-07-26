@@ -26,7 +26,7 @@ class DatabaseConfig:
     driver: Optional[str] = None
     host: Optional[str] = None
     port: Optional[int] = None
-    database: Optional[str] = "herpai.db"
+    database: Optional[str] = "openbiocure-catalog.db"
     username: Optional[str] = None
     password: Optional[str] = None
     is_memory_db: bool = False

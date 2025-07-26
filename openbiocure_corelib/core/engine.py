@@ -494,7 +494,7 @@ class Engine(IEngine):
                 # Register the generic repository
                 if type_args:
                     entity_type = type_args[0]
-                    generic_interface = IRepository[entity_type]
+                    generic_interface = IRepository[entity_type]  # type: ignore
 
                     # Create and register the generic repository
                     def create_generic_factory(
