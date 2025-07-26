@@ -2,5 +2,5 @@
 database:
   dialect: "sqlite"
   driver: "aiosqlite"
-  database: "./db/herpai.db"
+  database: "./db/openbiocure-catalog"
   is_memory_db: false # Set to true to use in-memory database

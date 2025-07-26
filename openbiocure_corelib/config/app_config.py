@@ -64,7 +64,11 @@ class DatabaseConfig:
         if dialect == "sqlite":
             # Default to memory DB if no database path provided
             is_memory_db = config.get("is_memory_db", False)
-            database = config.get("database", "herpai.db") if not is_memory_db else None
+            database = (
+                config.get("database", "openbiocure-catalog")
+                if not is_memory_db
+                else None
+            )
 
             return cls(
                 dialect="sqlite",

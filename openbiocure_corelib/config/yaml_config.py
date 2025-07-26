@@ -55,7 +55,7 @@ class YamlConfig:
         driver = db_config.get("driver", "")
 
         if dialect == "sqlite":
-            database = db_config.get("database", "herpai.db")
+            database = db_config.get("database", "openbiocure-catalog")
             return f"sqlite+aiosqlite:///{database}"
 
         driver_str = f"+{driver}" if driver else ""

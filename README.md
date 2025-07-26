@@ -197,7 +197,7 @@ done
 database:
   dialect: "sqlite"
   driver: "aiosqlite"
-  database: "./db/herpai.db"
+  database: "./db/openbiocure-catalog.db"
   is_memory_db: false
 
 app:
