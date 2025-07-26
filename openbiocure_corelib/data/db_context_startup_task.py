@@ -2,10 +2,10 @@
 
 import logging
 
-from openbiocure_corelib.config.app_config import AppConfig
-from openbiocure_corelib.core.engine import Engine
-from openbiocure_corelib.core.startup_task import StartupTask
-from openbiocure_corelib.data.db_context import DbContext, IDbContext
+from ..config.app_config import AppConfig
+from ..core.engine import Engine
+from ..core.startup_task import StartupTask
+from .db_context import DbContext, IDbContext
 
 logger = logging.getLogger(__name__)
 
@@ -23,11 +23,16 @@ class DatabaseSchemaStartupTask(StartupTask):
             db_config = app_config.db_config
 
             # Create database context
+            if db_config is None:
+                logger.warning(
+                    "No database configuration found, skipping database initialization"
+                )
+                return
             db_context = DbContext(db_config)
 
             # Register database context
             engine = Engine.current()
-            engine.register(IDbContext, db_context)
+            engine.register(IDbContext, db_context)  # type: ignore
             engine.register(DbContext, db_context)
 
             # Create schema
@@ -42,7 +47,7 @@ class DatabaseSchemaStartupTask(StartupTask):
         try:
             # Get database context
             engine = Engine.current()
-            db_context = engine.resolve(IDbContext)
+            db_context = engine.resolve(IDbContext)  # type: ignore
 
             # Close database context
             if db_context:

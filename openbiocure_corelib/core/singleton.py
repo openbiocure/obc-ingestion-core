@@ -1,4 +1,4 @@
-from typing import Type, TypeVar
+from typing import Type, TypeVar, Dict, Any
 
 T = TypeVar("T")
 
@@ -9,7 +9,7 @@ class Singleton:
     This class allows creating singleton instances of any class.
     """
 
-    _instances = {}
+    _instances: Dict[Type[Any], Any] = {}
 
     @classmethod
     def get_instance(cls, class_type: Type[T]) -> T:

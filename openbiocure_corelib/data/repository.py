@@ -69,6 +69,18 @@ class IRepository(Generic[T], Protocol):
         """
         ...
 
+    async def find_one(self, spec: ISpecification[T]) -> Optional[T]:
+        """
+        Find the first entity that matches the given specification.
+
+        Args:
+            spec: The specification to match against
+
+        Returns:
+            The first matching entity if found, None otherwise
+        """
+        ...
+
 
 class Repository(Generic[T], IRepository[T]):
     """
@@ -204,8 +216,8 @@ class Repository(Generic[T], IRepository[T]):
             )
             result = await self._session.execute(stmt)
             await self._session.commit()
-            entity = result.scalar_one_or_none()
-            if entity:
+            updated_entity = result.scalar_one_or_none()
+            if updated_entity:
                 logger.info(
                     f"Updated {self._entity_type.__name__} with ID: {entity_id}"
                 )
@@ -213,7 +225,7 @@ class Repository(Generic[T], IRepository[T]):
                 logger.warning(
                     f"No {self._entity_type.__name__} found with ID: {entity_id} for update"
                 )
-            return entity
+            return updated_entity
         except Exception as e:
             await self._session.rollback()
             logger.error(
@@ -267,11 +279,41 @@ class Repository(Generic[T], IRepository[T]):
         try:
             stmt = select(self._entity_type).where(spec.to_expression())
             result = await self._session.execute(stmt)
-            entities = result.scalars().all()
+            entities = list(result.scalars().all())
             logger.debug(f"Found {len(entities)} {self._entity_type.__name__} entities")
             return entities
         except Exception as e:
             logger.error(
                 f"Error finding {self._entity_type.__name__} entities: {str(e)}"
             )
+            raise
+
+    async def find_one(self, spec: ISpecification[T]) -> Optional[T]:
+        """
+        Find the first entity that matches the given specification.
+
+        Args:
+            spec: The specification to match against
+
+        Returns:
+            The first matching entity if found, None otherwise
+        """
+        logger.debug(
+            f"Finding first {self._entity_type.__name__} entity matching specification"
+        )
+        try:
+            stmt = select(self._entity_type).where(spec.to_expression()).limit(1)
+            result = await self._session.execute(stmt)
+            entity = result.scalar_one_or_none()
+            if entity:
+                logger.debug(
+                    f"Found {self._entity_type.__name__} entity with ID: {entity.id}"
+                )
+            else:
+                logger.debug(
+                    f"No {self._entity_type.__name__} entity found matching specification"
+                )
+            return entity
+        except Exception as e:
+            logger.error(f"Error finding {self._entity_type.__name__} entity: {str(e)}")
             raise

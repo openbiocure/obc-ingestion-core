@@ -390,10 +390,15 @@ class Engine(IEngine):
         # Register configuration
         try:
             from ..config.app_config import AppConfig
+            from ..config.yaml_config import YamlConfig
 
             # Get or initialize app config
             app_config = AppConfig.get_instance()
             self._services.add_singleton(AppConfig, lambda: app_config)
+
+            # Register YamlConfig
+            yaml_config = YamlConfig.get_instance()
+            self._services.add_singleton(YamlConfig, lambda: yaml_config)
 
             # Setup database using AppConfig
             try:

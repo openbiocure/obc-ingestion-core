@@ -1,5 +1,5 @@
 import inspect
-from typing import Optional, Type, TypeVar, Any
+from typing import Optional, Type, TypeVar, Any, Dict
 
 T = TypeVar("T")
 
@@ -12,9 +12,9 @@ class ServiceCollection:
 
     def __init__(self) -> None:
         """Initialize a new service collection."""
-        self._services = {}
-        self._scoped_factories = {}
-        self._transient_factories = {}
+        self._services: Dict[Any, Any] = {}
+        self._scoped_factories: Dict[Any, Any] = {}
+        self._transient_factories: Dict[Any, Any] = {}
 
     def add_singleton(self, interface_type: Any, implementation):
         """

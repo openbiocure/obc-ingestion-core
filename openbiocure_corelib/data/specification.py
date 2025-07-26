@@ -1,6 +1,6 @@
 from typing import Any, Generic, Protocol, TypeVar
 
-T = TypeVar("T")
+T = TypeVar("T", contravariant=True)
 
 
 class ISpecification(Generic[T], Protocol):

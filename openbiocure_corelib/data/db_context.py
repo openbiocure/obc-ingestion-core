@@ -51,7 +51,7 @@ class DbContext:
             self.connection_string = connection_string_or_config
 
         self._engine: Optional[AsyncEngine] = None
-        self._session_factory = None
+        self._session_factory: Optional[Any] = None
         self._session: Optional[AsyncSession] = None
 
         # Immediate synchronous initialization
@@ -71,7 +71,8 @@ class DbContext:
             )
 
             # Create session
-            self._session = self._session_factory()
+            if self._session_factory:
+                self._session = self._session_factory()
 
             logger.debug(f"DbContext initialized with {self.connection_string}")
         except Exception as e:
@@ -110,6 +111,9 @@ class DbContext:
         if self._session is None:
             await self.initialize()
 
+        if self._session is None:
+            raise RuntimeError("Failed to initialize session")
+
         if parameters:
             result = await self._session.execute(query, parameters)
         else:
@@ -124,6 +128,9 @@ class DbContext:
         if self._session is None:
             # If somehow the session is not initialized, initialize it
             self._initialize_sync()
+
+        if self._session is None:
+            raise RuntimeError("Failed to initialize session")
 
         return self._session
 
