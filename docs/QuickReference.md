@@ -19,6 +19,8 @@ make run-examples
 make test
 ```
 
+> **Note**: This package is not yet published to PyPI. Install from source or GitHub.
+
 ## 📁 Essential Files to Copy
 
 ### Core DI Engine

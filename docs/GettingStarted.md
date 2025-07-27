@@ -63,20 +63,42 @@ python examples/03_app_config.py
 
 ## Installation
 
-### As a Dependency
-
-If you want to use this library in your project:
-
-```bash
-pip install obc-ingestion-core
-```
-
-### From Source
+### From Source (Recommended)
 
 ```bash
 git clone https://github.com/openbiocure/obc-ingestion-core.git
 cd obc-ingestion-core
 pip install -e .
+```
+
+### From GitHub (Direct)
+
+```bash
+pip install git+https://github.com/openbiocure/obc-ingestion-core.git
+```
+
+### As a Development Dependency
+
+```bash
+git clone https://github.com/openbiocure/obc-ingestion-core.git
+cd obc-ingestion-core
+pip install -e ".[dev]"
+```
+
+> **Note**: This package is not yet published to PyPI. Use one of the methods above to install from source or directly from GitHub.
+
+### Future: Installing from PyPI
+
+Once the package is published to PyPI, you'll be able to install it with:
+
+```bash
+pip install obc-ingestion-core
+```
+
+For development dependencies:
+
+```bash
+pip install obc-ingestion-core[dev]
 ```
 
 ## Basic Usage
@@ -516,6 +538,66 @@ If you find this project useful and want to contribute:
 3. Make your changes
 4. Add tests for new functionality
 5. Submit a pull request
+
+## Publishing to PyPI
+
+When you're ready to publish your own package to PyPI:
+
+### 1. Prepare Your Package
+
+Ensure your `pyproject.toml` is properly configured:
+
+```toml
+[project]
+name = "your-package-name"
+version = "1.0.0"
+description = "Your package description"
+authors = [{name = "Your Name", email = "your.email@example.com"}]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "sqlalchemy>=2.0.0",
+    "pyyaml>=6.0",
+    # ... other dependencies
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.18.0",
+    # ... other dev dependencies
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+```
+
+### 2. Build and Publish
+
+```bash
+# Install build tools
+pip install build twine
+
+# Build the package
+python -m build
+
+# Upload to PyPI (you'll need a PyPI account)
+twine upload dist/*
+
+# Or upload to TestPyPI first
+twine upload --repository testpypi dist/*
+```
+
+### 3. Verify Installation
+
+```bash
+# Test installation from PyPI
+pip install your-package-name
+
+# Test with dev dependencies
+pip install your-package-name[dev]
+```
 
 ## License
 

@@ -35,22 +35,26 @@
 
 ## 🛠️ Installation
 
-```bash
-pip install obc-connectors-core
-```
-
-Or install from GitHub:
+### From Source (Recommended)
 
 ```bash
-pip install git+https://github.com/openbiocure/obc-connectors-core.git
-```
-
-For development:
-
-```bash
-git clone https://github.com/openbiocure//obc-connectors-core.git
+git clone https://github.com/openbiocure/obc-ingestion-core.git
 cd obc-ingestion-core
 pip install -e .
+```
+
+### From GitHub (Direct)
+
+```bash
+pip install git+https://github.com/openbiocure/obc-ingestion-core.git
+```
+
+### For Development
+
+```bash
+git clone https://github.com/openbiocure/obc-ingestion-core.git
+cd obc-ingestion-core
+pip install -e ".[dev]"
 ```
 
 ## ⚡ Quick Start
