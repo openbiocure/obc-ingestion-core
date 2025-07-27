@@ -15,8 +15,16 @@ async def test_db_context_initialization():
     # Initialize
     await db_context.initialize()
 
-    # Check session
-    assert db_context._session is not None
+    # Check that the context is initialized (session factory should be available)
+    assert db_context._session_factory is not None
+    assert db_context._is_initialized is True
+
+    # Test that we can get a session through the context manager
+    async with db_context.session_context() as session:
+        assert session is not None
+        # Test that the session is working
+        result = await session.execute(text("SELECT 1"))
+        assert result.scalar() == 1
 
     # Cleanup
     await db_context.close()
