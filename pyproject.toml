@@ -10,10 +10,10 @@ description = "OBC Ingestion Core is the foundational library for data ingestion
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
-"sqlalchemy> = 2.0.0",
-"pyyaml> = 6.0",
-"aiosqlite> = 0.17.0",
-"greenlet> = 2.0.0"
+"sqlalchemy>=2.0.0",
+"pyyaml>=6.0",
+"aiosqlite>=0.17.0",
+"greenlet>=2.0.0"
 ]
 
 
@@ -28,13 +28,13 @@ email = "openbiocure@gmail.com"
 
 [project.optional-dependencies]
 dev = [
-"pytest> = 7.0.0",
-"pytest-asyncio> = 0.18.0",
-"pytest-cov> = 4.0.0",
+"pytest>=7.0.0",
+"pytest-asyncio>=0.18.0",
+"pytest-cov>=4.0.0",
 "black",
 "isort",
 "mypy",
-"flake8> = 7.0.0",
+"flake8>=7.0.0",
 "pre-commit"
 ]
 
