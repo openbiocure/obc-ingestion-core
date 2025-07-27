@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=for-the-badge)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=for-the-badge&labelColor=ef8336)](https://pycqa.github.io/isort/)
-[![Makefile CI](https://github.com/openbiocure/obc-ingestion-core/actions/workflows/makefile.yml/badge.svg?style=for-the-badge)](https://github.com/openbiocure/obc-ingestion-core/actions/workflows/makefile.yml)
+[![Makefile CI](https://github.com/openbiocure/obc-ingestion-core/actions/workflows/makefile.yml/badge.svg)](https://github.com/openbiocure/obc-ingestion-core/actions/workflows/makefile.yml)
 
 
 **OpenBioCure Ingestion Core** is the foundational library for data ingestion and processing in the OpenBioCure platform. It provides enterprise-grade infrastructure components, configuration management, logging utilities, database session handling, and the repository pattern for building robust data ingestion workflows.
