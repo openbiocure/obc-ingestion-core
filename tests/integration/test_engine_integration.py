@@ -2,7 +2,7 @@
 
 import pytest
 
-from openbiocure_corelib.core.interfaces import IEngine
+from obc_ingestion_core.core.interfaces import IEngine
 from tests.mocks.mock_implementations import MockRepository, TestEntity
 
 

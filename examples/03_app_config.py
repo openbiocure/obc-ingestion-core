@@ -6,8 +6,8 @@ AppConfig with dataclasses for configuration.
 """
 
 import asyncio
-from openbiocure_corelib import engine
-from openbiocure_corelib.config.app_config import AppConfig
+from obc_ingestion_core import engine
+from obc_ingestion_core.config.app_config import AppConfig
 
 
 async def main():

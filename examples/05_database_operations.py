@@ -12,10 +12,10 @@ from datetime import datetime, UTC
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, func
 
-from openbiocure_corelib import engine
-from openbiocure_corelib.data.entity import BaseEntity
-from openbiocure_corelib.data.repository import IRepository
-from openbiocure_corelib.data.specification import Specification
+from obc_ingestion_core import engine
+from obc_ingestion_core.data.entity import BaseEntity
+from obc_ingestion_core.data.repository import IRepository
+from obc_ingestion_core.data.specification import Specification
 
 
 # Define entities

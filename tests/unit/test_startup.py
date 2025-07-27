@@ -2,8 +2,8 @@
 
 import pytest
 
-from openbiocure_corelib.core.startup_task import StartupTask
-from openbiocure_corelib.core.startup_task_executor import StartupTaskExecutor
+from obc_ingestion_core.core.startup_task import StartupTask
+from obc_ingestion_core.core.startup_task_executor import StartupTaskExecutor
 
 
 @pytest.mark.asyncio

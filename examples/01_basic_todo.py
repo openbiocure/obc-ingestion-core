@@ -11,7 +11,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from examples.domain.todo_entity import Todo
 from examples.repository.todo_repository import ITodoRepository, CompletedTodoSpecification, TitleContainsSpecification
-from openbiocure_corelib import engine
+from obc_ingestion_core import engine
 
 async def main() -> None:
 
@@ -25,7 +25,7 @@ async def main() -> None:
     )
 
     # Get the engine logger specifically
-    logger = logging.getLogger('openbiocure_corelib.core.engine')
+    logger = logging.getLogger('obc_ingestion_core.core.engine')
     
     # Initialize and start the engine 
     engine.initialize()

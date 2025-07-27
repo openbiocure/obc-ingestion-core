@@ -7,10 +7,10 @@ configuration sources - YAML and environment variables.
 
 import asyncio
 import os
-from openbiocure_corelib import engine
-from openbiocure_corelib.core.startup_task import StartupTask
-from openbiocure_corelib.config.yaml_config import YamlConfig
-from openbiocure_corelib.config.environment import Environment
+from obc_ingestion_core import engine
+from obc_ingestion_core.core.startup_task import StartupTask
+from obc_ingestion_core.config.yaml_config import YamlConfig
+from obc_ingestion_core.config.environment import Environment
 
 
 # Define a startup task to load environment variables

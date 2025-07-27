@@ -3,7 +3,7 @@
 import pytest
 from sqlalchemy.exc import SQLAlchemyError
 
-from openbiocure_corelib.data.specification import Specification
+from obc_ingestion_core.data.specification import Specification
 from tests.mocks.mock_implementations import MockRepository, TestEntity
 
 

@@ -9,13 +9,13 @@ import pytest
 import yaml
 from sqlalchemy import text
 
-# Add parent directory to path to make openbiocure_corelib importable
+# Add parent directory to path to make obc_ingestion_core importable
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 try:
-    from openbiocure_corelib.core.engine import Engine
-    from openbiocure_corelib.core.interfaces import IEngine
-    from openbiocure_corelib.data.db_context import DbContext
+    from obc_ingestion_core.core.engine import Engine
+    from obc_ingestion_core.core.interfaces import IEngine
+    from obc_ingestion_core.data.db_context import DbContext
 except ImportError:
     pass
 

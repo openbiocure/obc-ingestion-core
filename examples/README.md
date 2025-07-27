@@ -18,7 +18,7 @@ All examples use Python's async/await syntax since the engine's startup process 
 
 ```python
 import asyncio
-from openbiocure_corelib import engine
+from obc_ingestion_core import engine
 
 async def main():
     # Initialize the engine

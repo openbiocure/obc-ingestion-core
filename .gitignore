@@ -1,4 +1,4 @@
-openbiocure_corelib.egg-info
+obc_ingestion_core.egg-info
 .pytest_cache
 
 # Byte-compiled / optimized / DLL files
@@ -46,16 +46,16 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .nox/
-openbiocure_corelib/.coverage
-openbiocure_corelib/.coverage.*
-openbiocure_corelib/.cache
-openbiocure_corelib/nosetests.xml
-openbiocure_corelib/coverage.xml
-openbiocure_corelib/*.cover
-openbiocure_corelib/*.py,cover
-openbiocure_corelib/.hypothesis/
-openbiocure_corelib/.pytest_cache/
-openbiocure_corelib/cover/
+obc_ingestion_core/.coverage
+obc_ingestion_core/.coverage.*
+obc_ingestion_core/.cache
+obc_ingestion_core/nosetests.xml
+obc_ingestion_core/coverage.xml
+obc_ingestion_core/*.cover
+obc_ingestion_core/*.py,cover
+obc_ingestion_core/.hypothesis/
+obc_ingestion_core/.pytest_cache/
+obc_ingestion_core/cover/
 
 # Translations
 *.mo

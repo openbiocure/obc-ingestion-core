@@ -104,7 +104,7 @@ class TypeFinder(ITypeFinder):
             return False
 
         # Only load modules from specific packages that are likely to contain startup tasks
-        startup_packages = ["openbiocure_corelib.core", "openbiocure_corelib.data"]
+        startup_packages = ["obc_ingestion_core.core", "obc_ingestion_core.data"]
 
         return any(module_name.startswith(pkg) for pkg in startup_packages)
 

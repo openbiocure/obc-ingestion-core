@@ -6,14 +6,14 @@ VENV_NAME := venv
 VENV_BIN := $(VENV_NAME)/bin
 VENV_ACTIVATE := $(VENV_BIN)/activate
 PYTHON_VERSION := 3.9
-PACKAGE_NAME := openbiocure_corelib
+PACKAGE_NAME := obc-ingestion-core
 GITHUB_USERNAME := openbiocure
 GITHUB_REPO := obc-ingestion-core
 
 # Test and coverage settings
 TESTS_DIR := tests
-openbiocure_corelib_DIR := openbiocure_corelib
-COVERAGE_OPTIONS := --cov=$(openbiocure_corelib_DIR) --cov-report=term-missing
+obc_ingestion_core_DIR := obc_ingestion_core
+COVERAGE_OPTIONS := --cov=$(obc_ingestion_core_DIR) --cov-report=term-missing
 
 # OS specific commands
 ifeq ($(OS),Windows_NT)
@@ -89,21 +89,21 @@ run-examples: check-venv ## Run all examples
 
 lint: check-venv ## Run code linters (flake8 only)
 	@echo "$(BLUE)Running linters...$(NC)"
-	$(VENV_RUN) flake8 $(openbiocure_corelib_DIR) $(TESTS_DIR)
-	$(VENV_RUN) black --check $(openbiocure_corelib_DIR) $(TESTS_DIR)
-	$(VENV_RUN) isort --check-only $(openbiocure_corelib_DIR) $(TESTS_DIR)
+	$(VENV_RUN) flake8 $(obc_ingestion_core_DIR) $(TESTS_DIR)
+	$(VENV_RUN) black --check $(obc_ingestion_core_DIR) $(TESTS_DIR)
+	$(VENV_RUN) isort --check-only $(obc_ingestion_core_DIR) $(TESTS_DIR)
 
 lint-full: check-venv ## Run all linters including mypy
 	@echo "$(BLUE)Running all linters...$(NC)"
-	$(VENV_RUN) flake8 $(openbiocure_corelib_DIR) $(TESTS_DIR)
-	$(VENV_RUN) mypy $(openbiocure_corelib_DIR) $(TESTS_DIR)
-	$(VENV_RUN) black --check $(openbiocure_corelib_DIR) $(TESTS_DIR)
-	$(VENV_RUN) isort --check-only $(openbiocure_corelib_DIR) $(TESTS_DIR)
+	$(VENV_RUN) flake8 $(obc_ingestion_core_DIR) $(TESTS_DIR)
+	$(VENV_RUN) mypy $(obc_ingestion_core_DIR) $(TESTS_DIR)
+	$(VENV_RUN) black --check $(obc_ingestion_core_DIR) $(TESTS_DIR)
+	$(VENV_RUN) isort --check-only $(obc_ingestion_core_DIR) $(TESTS_DIR)
 
 format: check-venv ## Format code with black and isort
 	@echo "$(BLUE)Formatting code...$(NC)"
-	$(VENV_RUN) black $(openbiocure_corelib_DIR) $(TESTS_DIR)
-	$(VENV_RUN) isort $(openbiocure_corelib_DIR) $(TESTS_DIR)
+	$(VENV_RUN) black $(obc_ingestion_core_DIR) $(TESTS_DIR)
+	$(VENV_RUN) isort $(obc_ingestion_core_DIR) $(TESTS_DIR)
 
 check: lint test run-examples ## Run all quality checks (linting, tests, and examples)
 	@echo "$(GREEN)All checks passed!$(NC)"

@@ -1,8 +1,25 @@
-# OpenBioCure CoreLib
+# 🐍 OpenBioCure Ingestion Core Library
 
-[![Makefile CI](https://github.com/openbiocure/HerpAI-Lib/actions/workflows/makefile.yml/badge.svg)](https://github.com/openbiocure/HerpAI-Lib/actions/workflows/makefile.yml)
+[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=for-the-badge)](https://github.com/psf/black)
+[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=for-the-badge&labelColor=ef8336)](https://pycqa.github.io/isort/)
+[![Makefile CI](https://github.com/openbiocure/obc-ingestion-core/actions/workflows/makefile.yml/badge.svg?style=for-the-badge)](https://github.com/openbiocure/obc-ingestion-core/actions/workflows/makefile.yml)
 
-**OpenBioCure CoreLib** is the foundational core library for the [HerpAI](https://github.com/openbiocure/HerpAI) platform. It provides shared infrastructure components, configuration management, logging utilities, database session handling, and the repository pattern used across HerpAI agents and services.
+
+**OpenBioCure Ingestion Core** is the foundational library for data ingestion and processing in the OpenBioCure platform. It provides enterprise-grade infrastructure components, configuration management, logging utilities, database session handling, and the repository pattern for building robust data ingestion workflows.
+
+[![PyPI version](https://badge.fury.io/py/obc-ingestion-core.svg)](https://badge.fury.io/py/obc-ingestion-core)
+[![Downloads](https://img.shields.io/pypi/dm/obc-ingestion-core.svg)](https://pypi.org/project/obc-ingestion-core/)
+[![GitHub stars](https://img.shields.io/github/stars/openbiocure/obc-ingestion-core.svg?style=social&label=Star)](https://github.com/openbiocure/obc-ingestion-core)
+[![GitHub forks](https://img.shields.io/github/forks/openbiocure/obc-ingestion-core.svg?style=social&label=Fork)](https://github.com/openbiocure/obc-ingestion-core)
+
+## 🛠️ Tech Stack
+
+[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0+-red.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.sqlalchemy.org/)
+[![PyYAML](https://img.shields.io/badge/PyYAML-6.0+-green.svg?style=for-the-badge&logo=yaml&logoColor=white)](https://pyyaml.org/)
+[![aiosqlite](https://img.shields.io/badge/aiosqlite-0.17+-blue.svg?style=for-the-badge&logo=sqlite&logoColor=white)](https://aiosqlite.readthedocs.io/)
+[![asyncio](https://img.shields.io/badge/asyncio-Native-orange.svg?style=for-the-badge&logo=python&logoColor=white)](https://docs.python.org/3/library/asyncio.html)
 
 ## 🚀 Features
 
@@ -19,19 +36,19 @@
 ## 🛠️ Installation
 
 ```bash
-pip install openbiocure-corelib
+pip install obc-connectors-core
 ```
 
 Or install from GitHub:
 
 ```bash
-pip install git+https://github.com/openbiocure/HerpAI-Lib.git
+pip install git+https://github.com/openbiocure/obc-connectors-core.git
 ```
 
 For development:
 
 ```bash
-git clone https://github.com/openbiocure/HerpAI-Lib.git
+git clone https://github.com/openbiocure//obc-connectors-core.git
 cd HerpAI-Lib
 pip install -e .
 ```
@@ -42,7 +59,7 @@ pip install -e .
 
 ```python
 import asyncio
-from openbiocure_corelib import engine, IRepository, Repository, BaseEntity
+from obc_ingestion_core import engine, IRepository, Repository, BaseEntity
 
 # Initialize and start the engine
 engine.initialize()
@@ -59,7 +76,7 @@ entities = await my_repo.find(MySpecification())
 ### Configuration
 
 ```python
-from openbiocure_corelib import YamlConfig, AppConfig
+from obc_ingestion_core import YamlConfig, AppConfig
 
 # Access YAML configuration
 config = engine.resolve(YamlConfig)
@@ -77,7 +94,7 @@ model_provider = app_config.default_model_provider
 The central orchestrator managing application lifecycle and services:
 
 ```python
-from openbiocure_corelib import engine
+from obc_ingestion_core import engine
 
 # Initialize the engine
 engine.initialize()
@@ -97,7 +114,7 @@ await engine.start()
 Type-safe data access with SQLAlchemy integration:
 
 ```python
-from openbiocure_corelib import IRepository, Repository, BaseEntity
+from obc_ingestion_core import IRepository, Repository, BaseEntity
 
 class Todo(BaseEntity):
     __tablename__ = "todos"
@@ -120,7 +137,7 @@ todo = await todo_repo.create(title="Learn CoreLib", completed=False)
 Encapsulate query logic in reusable objects:
 
 ```python
-from openbiocure_corelib import Specification
+from obc_ingestion_core import Specification
 
 class CompletedTodoSpecification(Specification[Todo]):
     def to_expression(self):
@@ -146,7 +163,7 @@ combined = CompletedTodoSpecification() & TitleContainsSpecification("Learn")
 Ordered initialization with auto-discovery:
 
 ```python
-from openbiocure_corelib import StartupTask
+from obc_ingestion_core import StartupTask
 
 class DatabaseInitializationTask(StartupTask):
     order = 30  # Lower numbers run first
@@ -215,7 +232,7 @@ logging:
 ### Environment Variables
 
 ```python
-from openbiocure_corelib import Environment
+from obc_ingestion_core import Environment
 
 db_host = Environment.get('HERPAI_DB_HOST', 'localhost')
 debug_mode = Environment.get_bool('HERPAI_DEBUG', False)
@@ -227,7 +244,7 @@ port = Environment.get_int('HERPAI_PORT', 5432)
 ### Custom Repositories
 
 ```python
-from openbiocure_corelib import IRepository, Repository, BaseEntity
+from obc_ingestion_core import IRepository, Repository, BaseEntity
 
 class User(BaseEntity):
     __tablename__ = "users"
@@ -245,7 +262,7 @@ class UserRepository(Repository[User]):
 ### Custom Startup Tasks
 
 ```python
-from openbiocure_corelib import StartupTask
+from obc_ingestion_core import StartupTask
 
 class ModelInitializationTask(StartupTask):
     order = 40
@@ -261,7 +278,7 @@ class ModelInitializationTask(StartupTask):
 ### Custom Services
 
 ```python
-from openbiocure_corelib import engine
+from obc_ingestion_core import engine
 
 class IEmailService(Protocol):
     async def send_email(self, to: str, subject: str, body: str) -> bool: ...
@@ -278,7 +295,7 @@ engine.register(IEmailService, EmailService)
 ## 📁 Library Structure
 
 ```
-openbiocure_corelib/
+obc_ingestion_core/
 ├── config/           # Configuration management
 │   ├── app_config.py
 │   ├── environment.py
@@ -350,5 +367,5 @@ This library is released under the MIT License as part of the OpenBioCure initia
 ### [0.2.1] - 2025-04-05
 
 #### Changed
-- Renamed library to `openbiocure_corelib`
+- Renamed library to `obc_ingestion_core`
 - Updated project metadata and package name

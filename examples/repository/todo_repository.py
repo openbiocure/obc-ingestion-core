@@ -1,8 +1,8 @@
 from typing import List, Protocol
 from sqlalchemy.ext.asyncio import AsyncSession
 from examples.domain.todo_entity import Todo
-from openbiocure_corelib.data.repository import IRepository, Repository
-from openbiocure_corelib.data.specification import Specification
+from obc_ingestion_core.data.repository import IRepository, Repository
+from obc_ingestion_core.data.specification import Specification
 
 # Define a Todo repository interface
 class ITodoRepository(IRepository[Todo], Protocol):

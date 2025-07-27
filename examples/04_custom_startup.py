@@ -7,8 +7,8 @@ with auto-discovery, ordering, and configuration.
 
 import asyncio
 import logging
-from openbiocure_corelib import engine
-from openbiocure_corelib.core.startup_task import StartupTask
+from obc_ingestion_core import engine
+from obc_ingestion_core.core.startup_task import StartupTask
 
 # Configure logging
 logging.basicConfig(
@@ -75,7 +75,7 @@ async def main():
         print(f"- {task_name} (Order: {task.order}, Status: {status})")
 
     # Print startup task configuration
-    from openbiocure_corelib.config.yaml_config import YamlConfig
+    from obc_ingestion_core.config.yaml_config import YamlConfig
 
     config = engine.resolve(YamlConfig)
 

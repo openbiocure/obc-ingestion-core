@@ -5,8 +5,8 @@ This example demonstrates how to use the YAML configuration
 system with dotted access.
 """
 import asyncio
-from openbiocure_corelib import engine
-from openbiocure_corelib.config.yaml_config import YamlConfig
+from obc_ingestion_core import engine
+from obc_ingestion_core.config.yaml_config import YamlConfig
 
 async def main():
     # Initialize and start the engine with auto-discovered tasks

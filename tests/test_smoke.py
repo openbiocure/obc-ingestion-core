@@ -1,9 +1,9 @@
 """Smoke tests for HerpAI-Lib."""
 
-from openbiocure_corelib import engine
-from openbiocure_corelib.core.engine import Engine
-from openbiocure_corelib.core.startup_task import StartupTask
-from openbiocure_corelib.data.entity import BaseEntity
+from obc_ingestion_core import engine
+from obc_ingestion_core.core.engine import Engine
+from obc_ingestion_core.core.startup_task import StartupTask
+from obc_ingestion_core.data.entity import BaseEntity
 
 
 def test_import_core_modules():

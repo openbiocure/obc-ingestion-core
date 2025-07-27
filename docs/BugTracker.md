@@ -6,7 +6,7 @@ This document tracks known issues, bugs, and areas for improvement in the OpenBi
 
 ### 1. TypeFinder Module Scanning Error
 **Status**: 🔴 Critical  
-**Location**: `openbiocure_corelib/core/type_finder.py:224-225`  
+**Location**: `obc_ingestion_core/core/type_finder.py:224-225`  
 **Error**: `AttributeError: 'member_descriptor' object has no attribute 'startswith'`
 
 **Description**: The TypeFinder is encountering an error when scanning the `_cython_3_1_0` module. This happens because the code assumes all class objects have a `__module__` attribute that is a string, but some Cython-generated objects have `member_descriptor` objects instead.
@@ -53,7 +53,7 @@ if hasattr(class_obj, '__module__') and isinstance(class_obj.__module__, str):
 
 ### 3. Missing Configuration Sections
 **Status**: 🟡 High Priority  
-**Location**: `openbiocure_corelib/config/app_config.py`  
+**Location**: `obc_ingestion_core/config/app_config.py`  
 **Warning**: `Missing 'app' section in configuration, defaulting to empty dictionary`
 
 **Description**: The configuration system is warning about missing 'app' sections in YAML configuration files, which suggests the default configuration structure is incomplete.
@@ -76,7 +76,7 @@ if hasattr(class_obj, '__module__') and isinstance(class_obj.__module__, str):
 
 ### 4. Excessive Debug Logging
 **Status**: 🟢 Medium Priority  
-**Location**: `openbiocure_corelib/core/type_finder.py`  
+**Location**: `obc_ingestion_core/core/type_finder.py`  
 **Issue**: Verbose debug logging during module scanning
 
 **Description**: The TypeFinder is logging every module and class it scans, creating extremely verbose output that makes it difficult to see important information.
@@ -97,7 +97,7 @@ if hasattr(class_obj, '__module__') and isinstance(class_obj.__module__, str):
 
 ### 5. Repository Registration Duplication
 **Status**: 🟢 Medium Priority  
-**Location**: `openbiocure_corelib/core/engine.py`  
+**Location**: `obc_ingestion_core/core/engine.py`  
 **Issue**: Multiple registrations of the same repository interface
 
 **Description**: The engine is registering the same repository interface multiple times, which could lead to confusion and potential conflicts.
@@ -160,7 +160,7 @@ if hasattr(class_obj, '__module__') and isinstance(class_obj.__module__, str):
 
 ### 8. Slow Module Scanning
 **Status**: 🟡 Performance  
-**Location**: `openbiocure_corelib/core/type_finder.py`  
+**Location**: `obc_ingestion_core/core/type_finder.py`  
 **Issue**: Scanning all loaded modules on every startup
 
 **Description**: The TypeFinder scans all loaded modules (350+ in the logs) on every engine startup, which can be slow and resource-intensive.
@@ -181,7 +181,7 @@ if hasattr(class_obj, '__module__') and isinstance(class_obj.__module__, str):
 
 ### 9. Error Handling in TypeFinder
 **Status**: 🟢 Code Quality  
-**Location**: `openbiocure_corelib/core/type_finder.py`  
+**Location**: `obc_ingestion_core/core/type_finder.py`  
 **Issue**: Generic exception handling that masks specific errors
 
 **Description**: The TypeFinder catches all exceptions during module scanning, which can hide important errors and make debugging difficult.

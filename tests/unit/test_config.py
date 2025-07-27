@@ -5,7 +5,7 @@ import tempfile
 
 import yaml
 
-from openbiocure_corelib.config.yaml_config import YamlConfig
+from obc_ingestion_core.config.yaml_config import YamlConfig
 
 
 def test_yaml_config_load():

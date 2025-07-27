@@ -17,7 +17,7 @@ class ConfigurationStartupTask(StartupTask):
         try:
             # Lazy import to avoid circular dependencies
             yaml_config_module = importlib.import_module(
-                "openbiocure_corelib.config.yaml_config"
+                "obc_ingestion_core.config.yaml_config"
             )
             YamlConfig = getattr(yaml_config_module, "YamlConfig")
 

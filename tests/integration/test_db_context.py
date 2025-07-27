@@ -3,7 +3,7 @@
 import pytest
 from sqlalchemy import text
 
-from openbiocure_corelib.data.db_context import DbContext
+from obc_ingestion_core.data.db_context import DbContext
 
 
 @pytest.mark.asyncio

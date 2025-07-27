@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.sql import Executable
 
-from openbiocure_corelib.config.app_config import DatabaseConfig
+from obc_ingestion_core.config.app_config import DatabaseConfig
 
 logger = logging.getLogger(__name__)
 
@@ -144,7 +144,7 @@ class DbContext:
             await self.initialize()
 
         # Get the metadata from BaseEntity
-        from openbiocure_corelib.data.entity import BaseEntity
+        from obc_ingestion_core.data.entity import BaseEntity
 
         # Create all tables
         try:

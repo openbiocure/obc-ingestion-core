@@ -342,7 +342,7 @@ class Engine(IEngine):
         if self._startup_task_executor is None:
             try:
                 startup_executor_module = importlib.import_module(
-                    "openbiocure_corelib.core.startup_task_executor"
+                    "obc_ingestion_core.core.startup_task_executor"
                 )
                 StartupTaskExecutor = getattr(
                     startup_executor_module, "StartupTaskExecutor"

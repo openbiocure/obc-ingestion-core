@@ -2,7 +2,7 @@
 
 import pytest
 
-from openbiocure_corelib.core.engine import Engine
+from obc_ingestion_core.core.engine import Engine
 
 
 def test_engine_singleton():

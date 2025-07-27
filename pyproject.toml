@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-name = "openbiocure_corelib"
+name = "obc-ingestion-core"
 version = "3.1.0"
-description = "OpenBioCure_CoreLib is the foundational core library for the HerpAI platform. It provides shared infrastructure components, configuration management, logging utilities, database session handling, and the repository pattern used across HerpAI agents and services."
+description = "OBC Ingestion Core is the foundational library for data ingestion and processing in the OpenBioCure platform. It provides shared infrastructure components, configuration management, logging utilities, database session handling, and the repository pattern for data ingestion workflows."
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
@@ -45,7 +45,7 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = [ "." ]
-include = [ "openbiocure_corelib*" ]
+include = [ "obc_ingestion_core*" ]
 
 
 [tool.black]

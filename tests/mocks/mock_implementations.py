@@ -6,9 +6,9 @@ from typing import Dict, Generic, List, Optional, Type, TypeVar, Union
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Mapped, mapped_column
 
-from openbiocure_corelib.core.startup_task import StartupTask
-from openbiocure_corelib.data.entity import BaseEntity
-from openbiocure_corelib.data.specification import ISpecification
+from obc_ingestion_core.core.startup_task import StartupTask
+from obc_ingestion_core.data.entity import BaseEntity
+from obc_ingestion_core.data.specification import ISpecification
 
 T = TypeVar("T", bound=BaseEntity)
 

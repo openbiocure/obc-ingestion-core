@@ -1,6 +1,6 @@
 
 # Define a Todo entity
-from openbiocure_corelib.data.entity import BaseEntity
+from obc_ingestion_core.data.entity import BaseEntity
 from typing import Optional, List, Protocol
 from sqlalchemy.orm import Mapped, mapped_column
 
