@@ -369,3 +369,4 @@ This library is released under the MIT License as part of the OpenBioCure initia
 #### Changed
 - Renamed library to `obc_ingestion_core`
 - Updated project metadata and package name
+# CI Trigger
