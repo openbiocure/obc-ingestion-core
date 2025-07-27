@@ -217,24 +217,24 @@ class Engine(IEngine):
         """
         from sqlalchemy.ext.asyncio import AsyncSession
 
-        # Try to get the database session
+        # Try to get the database context first
+        db_context = None
+        try:
+            from ..data.db_context import IDbContext
+            db_context = self._services.get_service(IDbContext)
+        except Exception as e:
+            logger.warning(f"Failed to get DbContext: {str(e)}")
+
+        if db_context:
+            # Create a repository that uses the DbContext's session context manager
+            return self._create_context_aware_repository(repo_class, entity_type, db_context)
+        
+        # Fallback to direct session management
         session: Optional[Any] = self._services.get_service(AsyncSession)
-        if not session:
-            # Try getting it from DbContext
-            try:
-                from ..data.db_context import IDbContext
-
-                db_context = self._services.get_service(IDbContext)
-                if db_context:
-                    session = db_context.session
-            except Exception:
-                logger.warning("Failed to get session from DbContext")
-
         if not session:
             # As a last resort, create a mock/in-memory session for testing/development
             logger.warning(f"Creating in-memory session for {repo_class.__name__}")
             try:
-                # This is a placeholder - you may want to implement a proper in-memory session
                 session = self._create_memory_session()
             except Exception as e:
                 logger.error(f"Failed to create in-memory session: {str(e)}")
@@ -244,6 +244,53 @@ class Engine(IEngine):
 
         # Create and return the repository instance
         return repo_class(session, entity_type)
+
+    def _create_context_aware_repository(
+        self, repo_class: Type[Any], entity_type: Type[Any], db_context: Any
+    ) -> Any:
+        """
+        Create a repository that uses the DbContext's session context manager.
+        This ensures proper session lifecycle management.
+        """
+        # Create a wrapper repository that uses the DbContext's session context
+        class ContextAwareRepository(repo_class):
+            def __init__(self, db_context: Any, entity_type: Type[Any]):
+                self._db_context = db_context
+                self._entity_type = entity_type
+                # Don't call super().__init__ as we don't want to store a session directly
+                logger.debug(f"Initialized context-aware repository for entity type: {entity_type.__name__}")
+
+            async def create(self, entity=None, **kwargs):
+                async with self._db_context.session_context() as session:
+                    temp_repo = repo_class(session, self._entity_type)
+                    return await temp_repo.create(entity, **kwargs)
+
+            async def get(self, id: str):
+                async with self._db_context.session_context() as session:
+                    temp_repo = repo_class(session, self._entity_type)
+                    return await temp_repo.get(id)
+
+            async def update(self, id_or_entity, **kwargs):
+                async with self._db_context.session_context() as session:
+                    temp_repo = repo_class(session, self._entity_type)
+                    return await temp_repo.update(id_or_entity, **kwargs)
+
+            async def delete(self, id: str):
+                async with self._db_context.session_context() as session:
+                    temp_repo = repo_class(session, self._entity_type)
+                    return await temp_repo.delete(id)
+
+            async def find(self, spec):
+                async with self._db_context.session_context() as session:
+                    temp_repo = repo_class(session, self._entity_type)
+                    return await temp_repo.find(spec)
+
+            async def find_one(self, spec):
+                async with self._db_context.session_context() as session:
+                    temp_repo = repo_class(session, self._entity_type)
+                    return await temp_repo.find_one(spec)
+
+        return ContextAwareRepository(db_context, entity_type)
 
     def _create_memory_session(self: "Engine") -> Session:
         """

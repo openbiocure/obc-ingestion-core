@@ -1,6 +1,7 @@
 """Database context implementation for SQLAlchemy async operations."""
 
 import logging
+from contextlib import asynccontextmanager
 from typing import Any, Dict, Optional, Protocol, Union
 
 from sqlalchemy.engine import Result
@@ -39,6 +40,11 @@ class IDbContext(Protocol):
         """Get the current session."""
         ...
 
+    @asynccontextmanager
+    async def session_context(self):
+        """Get a managed session context."""
+        ...
+
 
 class DbContext:
     """Database context implementation for SQLAlchemy async operations."""
@@ -53,27 +59,32 @@ class DbContext:
         self._engine: Optional[AsyncEngine] = None
         self._session_factory: Optional[Any] = None
         self._session: Optional[AsyncSession] = None
-
-        # Immediate synchronous initialization
-        self._initialize_sync()
+        self._is_initialized = False
 
     def _initialize_sync(self) -> None:
         """Initialize the database context synchronously."""
+        if self._is_initialized:
+            return
+            
         try:
             # Create engine
             self._engine = create_async_engine(
-                self.connection_string, echo=False, future=True
+                self.connection_string, 
+                echo=False, 
+                future=True,
+                pool_pre_ping=True,  # Enable connection health checks
+                pool_recycle=3600,   # Recycle connections after 1 hour
             )
 
             # Create session factory
             self._session_factory = async_sessionmaker(
-                self._engine, expire_on_commit=False, class_=AsyncSession
+                self._engine, 
+                expire_on_commit=False, 
+                class_=AsyncSession,
+                autoflush=False,     # Disable autoflush for better control
             )
 
-            # Create session
-            if self._session_factory:
-                self._session = self._session_factory()
-
+            self._is_initialized = True
             logger.debug(f"DbContext initialized with {self.connection_string}")
         except Exception as e:
             logger.error(f"Failed to initialize DbContext: {str(e)}")
@@ -81,25 +92,53 @@ class DbContext:
 
     async def initialize(self) -> None:
         """Initialize the database context."""
-        # This method now just ensures the context is initialized
-        # but doesn't re-initialize if already done
-        if self._session is None:
+        if not self._is_initialized:
             self._initialize_sync()
 
     async def close(self) -> None:
         """Close the database context."""
-        if self._session:
-            await self._session.close()
-            self._session = None
+        try:
+            if self._session:
+                await self._session.close()
+                self._session = None
 
-        if self._engine:
-            await self._engine.dispose()
-            self._engine = None
+            if self._engine:
+                await self._engine.dispose()
+                self._engine = None
+                
+            self._is_initialized = False
+            logger.debug("DbContext closed successfully")
+        except Exception as e:
+            logger.error(f"Error closing DbContext: {str(e)}")
+            raise
+
+    @asynccontextmanager
+    async def session_context(self):
+        """Get a managed session context that ensures proper cleanup."""
+        if not self._is_initialized:
+            await self.initialize()
+            
+        session = None
+        try:
+            if self._session_factory:
+                session = self._session_factory()
+                yield session
+            else:
+                raise RuntimeError("Session factory not initialized")
+        except Exception as e:
+            if session:
+                await session.rollback()
+            logger.error(f"Error in session context: {str(e)}")
+            raise
+        finally:
+            if session:
+                await session.close()
+                logger.debug("Session closed in context manager")
 
     async def execute(
         self, query: Executable, parameters: Optional[Dict[str, Any]] = None
     ) -> Result:
-        """Execute a raw SQL query.
+        """Execute a raw SQL query with proper session management.
 
         Args:
             query: The query to execute
@@ -108,26 +147,28 @@ class DbContext:
         Returns:
             The result of the execution
         """
-        if self._session is None:
-            await self.initialize()
+        async with self.session_context() as session:
+            try:
+                if parameters:
+                    result = await session.execute(query, parameters)
+                else:
+                    result = await session.execute(query)
 
-        if self._session is None:
-            raise RuntimeError("Failed to initialize session")
-
-        if parameters:
-            result = await self._session.execute(query, parameters)
-        else:
-            result = await self._session.execute(query)
-
-        await self._session.commit()
-        return result
+                await session.commit()
+                return result
+            except Exception as e:
+                await session.rollback()
+                logger.error(f"Error executing query: {str(e)}")
+                raise
 
     @property
     def session(self) -> AsyncSession:
-        """Get the current session."""
-        if self._session is None:
-            # If somehow the session is not initialized, initialize it
+        """Get the current session. Use session_context() for better lifecycle management."""
+        if not self._is_initialized:
             self._initialize_sync()
+
+        if self._session is None and self._session_factory:
+            self._session = self._session_factory()
 
         if self._session is None:
             raise RuntimeError("Failed to initialize session")
@@ -140,7 +181,7 @@ class DbContext:
         logger.info("Creating database schema...")
 
         # Make sure engine is initialized
-        if self._engine is None:
+        if not self._is_initialized:
             await self.initialize()
 
         # Get the metadata from BaseEntity

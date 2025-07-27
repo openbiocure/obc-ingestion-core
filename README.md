@@ -49,7 +49,7 @@ For development:
 
 ```bash
 git clone https://github.com/openbiocure//obc-connectors-core.git
-cd HerpAI-Lib
+cd obc-ingestion-core
 pip install -e .
 ```
 

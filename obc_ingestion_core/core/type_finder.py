@@ -221,13 +221,14 @@ class TypeFinder(ITypeFinder):
                     discovered_types.add(class_obj)
 
                     # Skip classes from ignored modules
-                    if any(
-                        class_obj.__module__.startswith(m) for m in self._ignore_modules
-                    ):
-                        logger.debug(
-                            f"Skipping {class_obj.__name__} from ignored module {class_obj.__module__}"
-                        )
-                        continue
+                    if hasattr(class_obj, '__module__') and isinstance(class_obj.__module__, str):
+                        if any(
+                            class_obj.__module__.startswith(m) for m in self._ignore_modules
+                        ):
+                            logger.debug(
+                                f"Skipping {class_obj.__name__} from ignored module {class_obj.__module__}"
+                            )
+                            continue
 
                     # Check if it's an implementation of the target type
                     try:
@@ -293,10 +294,11 @@ class TypeFinder(ITypeFinder):
                     discovered_types.add(class_obj)
 
                     # Skip classes from ignored modules
-                    if any(
-                        class_obj.__module__.startswith(m) for m in self._ignore_modules
-                    ):
-                        continue
+                    if hasattr(class_obj, '__module__') and isinstance(class_obj.__module__, str):
+                        if any(
+                            class_obj.__module__.startswith(m) for m in self._ignore_modules
+                        ):
+                            continue
 
                     # Check if class implements the generic interface
                     if hasattr(class_obj, "__orig_bases__"):
