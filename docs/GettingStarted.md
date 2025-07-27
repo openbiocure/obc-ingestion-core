@@ -101,6 +101,104 @@ For development dependencies:
 pip install obc-ingestion-core[dev]
 ```
 
+
+## Using as a Development Dependency in Your Project
+
+There are several ways to use this project as a reference or development dependency in your own project:
+
+### Method 1: Install from GitHub (Recommended)
+
+In your project directory:
+
+```bash
+# From your project root
+cd my-project
+pip install -e git+https://github.com/openbiocure/obc-ingestion-core.git#egg=obc-ingestion-core
+```
+
+### Method 2: Clone as Subdirectory
+
+```bash
+# From your project root
+cd my-project
+git clone https://github.com/openbiocure/obc-ingestion-core.git
+pip install -e ./obc-ingestion-core
+```
+
+### Method 3: Git Submodule
+
+```bash
+# From your project root
+cd my-project
+git submodule add https://github.com/openbiocure/obc-ingestion-core.git
+pip install -e ./obc-ingestion-core
+```
+
+### Method 4: Requirements File
+
+Add to your `requirements.txt`:
+
+```txt
+-e git+https://github.com/openbiocure/obc-ingestion-core.git#egg=obc-ingestion-core
+```
+
+Or in `pyproject.toml`:
+
+```toml
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "-e git+https://github.com/openbiocure/obc-ingestion-core.git#egg=obc-ingestion-core"
+]
+```
+
+### Method 5: Reference Only (No Installation)
+
+If you just want to study the code without installing:
+
+```bash
+# Clone to a separate directory
+cd ~/references
+git clone https://github.com/openbiocure/obc-ingestion-core.git
+cd ~/my-project
+# Study the code in ~/references/obc-ingestion-core
+```
+
+### Directory Structure Examples:
+
+**Method 2 (Clone as subdirectory):**
+```
+my-project/
+├── src/
+├── tests/
+├── obc-ingestion-core/  # Cloned here
+├── requirements.txt
+└── pyproject.toml
+```
+
+**Method 3 (Git submodule):**
+```
+my-project/
+├── src/
+├── tests/
+├── obc-ingestion-core/  # Submodule here
+├── requirements.txt
+└── pyproject.toml
+```
+
+**Method 5 (Reference only):**
+```
+my-project/
+├── src/
+├── tests/
+├── requirements.txt
+└── pyproject.toml
+
+~/references/
+└── obc-ingestion-core/  # Reference copy here
+```
+
+The `-e` flag installs in "editable" mode, so any changes you make to the source code will be immediately available without reinstalling.
 ## Basic Usage
 
 ### 1. Initialize the Engine
