@@ -292,6 +292,23 @@ class EmailService:
 engine.register(IEmailService, EmailService)
 ```
 
+## 📚 Documentation
+
+- **[Getting Started Guide](docs/GettingStarted.md)** - Comprehensive guide for new users
+- **[Quick Reference](docs/QuickReference.md)** - Fast access to common patterns and code snippets
+- **[Bug Tracker](docs/BugTracker.md)** - Known issues and their status
+- **[Examples](examples/)** - Working examples demonstrating all features
+
+### Using as a Reference
+
+This project serves as an excellent reference for implementing:
+- **Dependency Injection** patterns
+- **Repository Pattern** with SQLAlchemy
+- **Configuration Management** with YAML and dataclasses
+- **Async Database** operations with proper session management
+- **Startup Task** orchestration
+- **Type-Safe** generic implementations
+
 ## 📁 Library Structure
 
 ```
