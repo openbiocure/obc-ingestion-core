@@ -207,43 +207,37 @@ obc-ingestion-core/
    - Auto-discovery of startup tasks
    - Cleanup handling
 
-### Copying Specific Components
+### Using as Reference Architecture
+
+Instead of copying files, study these components to understand the patterns:
 
 #### 1. Dependency Injection Engine
 
-```python
-# Copy these files for DI functionality:
-# - obc_ingestion_core/core/engine.py
-# - obc_ingestion_core/core/service_collection.py
-# - obc_ingestion_core/core/service_scope.py
-# - obc_ingestion_core/core/singleton.py
-```
+Study these files to understand DI patterns:
+- `obc_ingestion_core/core/engine.py` - Central DI container
+- `obc_ingestion_core/core/service_collection.py` - Service registration
+- `obc_ingestion_core/core/service_scope.py` - Lifetime management
+- `obc_ingestion_core/core/singleton.py` - Singleton pattern
 
 #### 2. Repository Pattern
 
-```python
-# Copy these files for repository pattern:
-# - obc_ingestion_core/data/repository.py
-# - obc_ingestion_core/data/specification.py
-# - obc_ingestion_core/data/entity.py
-```
+Study these files to understand data access patterns:
+- `obc_ingestion_core/data/repository.py` - Generic repository implementation
+- `obc_ingestion_core/data/specification.py` - Query specification pattern
+- `obc_ingestion_core/data/entity.py` - Base entity class
 
 #### 3. Configuration Management
 
-```python
-# Copy these files for configuration:
-# - obc_ingestion_core/config/app_config.py
-# - obc_ingestion_core/config/yaml_config.py
-# - obc_ingestion_core/config/environment.py
-```
+Study these files to understand configuration patterns:
+- `obc_ingestion_core/config/app_config.py` - Strongly-typed configuration
+- `obc_ingestion_core/config/yaml_config.py` - YAML configuration loading
+- `obc_ingestion_core/config/environment.py` - Environment variable integration
 
 #### 4. Database Context
 
-```python
-# Copy these files for database management:
-# - obc_ingestion_core/data/db_context.py
-# - obc_ingestion_core/data/db_context_startup_task.py
-```
+Study these files to understand database patterns:
+- `obc_ingestion_core/data/db_context.py` - Async database context
+- `obc_ingestion_core/data/db_context_startup_task.py` - Database initialization
 
 ## Architecture Overview
 

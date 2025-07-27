@@ -299,19 +299,21 @@ engine.register(IEmailService, EmailService)
 ## 📚 Documentation
 
 - **[Getting Started Guide](docs/GettingStarted.md)** - Comprehensive guide for new users
-- **[Quick Reference](docs/QuickReference.md)** - Fast access to common patterns and code snippets
+
 - **[Bug Tracker](docs/BugTracker.md)** - Known issues and their status
 - **[Examples](examples/)** - Working examples demonstrating all features
 
 ### Using as a Reference
 
 This project serves as an excellent reference for implementing:
-- **Dependency Injection** patterns
-- **Repository Pattern** with SQLAlchemy
+- **Dependency Injection** patterns with service lifetime management
+- **Repository Pattern** with SQLAlchemy and async support
 - **Configuration Management** with YAML and dataclasses
 - **Async Database** operations with proper session management
-- **Startup Task** orchestration
+- **Startup Task** orchestration and auto-discovery
 - **Type-Safe** generic implementations
+
+Study the codebase to understand these patterns and adapt them to your own projects.
 
 ## 📁 Library Structure
 
