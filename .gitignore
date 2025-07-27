@@ -182,4 +182,10 @@ cython_debug/
 
 .DS_Store
 *.DS_Store
-./db
+
+# Database files
+db/
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
